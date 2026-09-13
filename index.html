@@ -1,0 +1,716 @@
+<title>Optomotor Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b120d;
+    --surface:#121b15;
+    --surface-2:#1a2620;
+    --surface-3:#22321a;
+    --line:rgba(217,255,200,0.11);
+    --line-strong:rgba(217,255,200,0.22);
+    --text:#eaf2e6;
+    --text-dim:#9fb3a4;
+    --text-faint:#5f7568;
+    --accent:#c6ff3d;
+    --accent-soft:rgba(198,255,61,0.16);
+    --accent-dim:#7a9c2e;
+    --accent-2:#ff7a54;
+    --accent-2-soft:rgba(255,122,84,0.16);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:"IBM Plex Sans",system-ui,sans-serif;
+    padding:20px 20px 40px;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+    min-height:100vh;
+  }
+  ::selection{ background:var(--accent-soft); }
+
+  .mono{ font-family:"IBM Plex Mono","SF Mono",monospace; }
+  .tabular{ font-variant-numeric:tabular-nums; }
+
+  a{ color:var(--accent); }
+
+  /* ---------- header ---------- */
+  header{
+    max-width:1180px;
+    margin:0 auto;
+    width:100%;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:8px 24px;
+    border-bottom:1px solid var(--line);
+    padding-bottom:16px;
+  }
+  .kicker{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--accent-dim);
+  }
+  h1{
+    font-family:"Fraunces",serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:clamp(26px,4vw,38px);
+    margin:2px 0 0;
+    color:var(--text);
+    text-wrap:balance;
+  }
+  header p{
+    margin:0;
+    max-width:46ch;
+    color:var(--text-dim);
+    font-size:13.5px;
+    line-height:1.5;
+  }
+
+  main{
+    max-width:1180px;
+    margin:0 auto;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+
+  /* ---------- control rail ---------- */
+  .rail{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:10px 14px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px 16px;
+  }
+  .rail-group{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+  .rail-label{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:10px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--text-faint);
+    margin-right:2px;
+  }
+  .sep{ width:1px; align-self:stretch; background:var(--line); margin:0 2px; }
+
+  button.stim, label.upload{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11.5px;
+    letter-spacing:.03em;
+    color:var(--text-dim);
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:7px 11px;
+    cursor:pointer;
+    transition:border-color .15s, color .15s, background .15s;
+    white-space:nowrap;
+  }
+  button.stim:hover, label.upload:hover{ border-color:var(--line-strong); color:var(--text); }
+  button.stim.active{
+    background:var(--accent-soft);
+    border-color:var(--accent-dim);
+    color:var(--accent);
+  }
+  button.icon-btn{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11.5px;
+    color:var(--bg);
+    background:var(--accent);
+    border:1px solid var(--accent);
+    border-radius:6px;
+    padding:7px 14px;
+    cursor:pointer;
+    font-weight:600;
+  }
+  button.icon-btn:hover{ filter:brightness(1.08); }
+  button.ghost{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11.5px;
+    color:var(--text-dim);
+    background:transparent;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:7px 12px;
+    cursor:pointer;
+  }
+  button.ghost:hover{ border-color:var(--line-strong); color:var(--text); }
+  input[type=file]{ display:none; }
+
+  .slider-wrap{ display:flex; align-items:center; gap:7px; }
+  .slider-wrap span.val{ width:2.6ch; text-align:right; color:var(--accent); font-size:11.5px; }
+  input[type=range]{
+    -webkit-appearance:none; appearance:none;
+    width:88px; height:3px; border-radius:2px;
+    background:var(--line-strong);
+    outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none;
+    width:13px; height:13px; border-radius:50%;
+    background:var(--accent); cursor:pointer;
+    border:2px solid var(--bg);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:13px; height:13px; border-radius:50%;
+    background:var(--accent); cursor:pointer; border:2px solid var(--bg);
+  }
+
+  /* ---------- console grid ---------- */
+  .console{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:14px;
+  }
+  @media (max-width:860px){
+    .console{ grid-template-columns:1fr; }
+  }
+
+  .panel{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:14px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    min-width:0;
+  }
+  .panel-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+  }
+  .panel-tag{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:10.5px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--text-faint);
+  }
+  .panel-tag b{ color:var(--text-dim); font-weight:600; }
+  .panel-note{ font-size:10.5px; color:var(--text-faint); }
+
+  .frame{
+    position:relative;
+    width:100%;
+    aspect-ratio:16/9;
+    background:#000;
+    border-radius:6px;
+    overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .frame canvas{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    display:block;
+    image-rendering:pixelated;
+  }
+  #eyeOverlay{ image-rendering:auto; }
+
+  .pathway{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:4px 5px;
+    font-family:"IBM Plex Mono",monospace;
+    font-size:9.5px;
+    letter-spacing:.03em;
+    color:var(--text-faint);
+  }
+  .pathway .node{
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:3px 6px;
+    white-space:nowrap;
+  }
+  .pathway .arrow{ color:var(--accent-dim); }
+
+  .readouts{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .readout{ display:flex; flex-direction:column; gap:1px; }
+  .readout .k{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--text-faint);
+  }
+  .readout .v{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:15px; color:var(--accent);
+  }
+  .readout.thrust .v{ color:var(--accent-2); }
+
+  /* ---------- telemetry ---------- */
+  .telemetry{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:14px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .telemetry-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    flex-wrap:wrap;
+    gap:6px 16px;
+  }
+  .legend{ display:flex; gap:14px; flex-wrap:wrap; }
+  .legend-item{
+    display:flex; align-items:center; gap:6px;
+    font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--text-dim);
+  }
+  .swatch{ width:10px; height:2px; border-radius:1px; }
+  #chart{ width:100%; height:130px; display:block; }
+
+  footer{
+    max-width:1180px; margin:0 auto; width:100%;
+    color:var(--text-faint);
+    font-size:12px;
+    line-height:1.6;
+    border-top:1px solid var(--line);
+    padding-top:14px;
+  }
+  footer strong{ color:var(--text-dim); }
+
+  @media (prefers-reduced-motion: reduce){
+    * { animation-duration:0.001ms !important; }
+  }
+</style>
+
+<header>
+  <div>
+    <div class="kicker">Drosophila visual-motor loop · toy model</div>
+    <h1>Optomotor Console</h1>
+  </div>
+  <p>Feed a moving image to a simulated compound eye and watch a Hassenstein–Reichardt correlator turn optic flow into steering — the same reflex that keeps a real fly's gaze locked to the world.</p>
+</header>
+
+<main>
+  <div class="rail">
+    <div class="rail-group">
+      <span class="rail-label">Stimulus</span>
+      <button class="stim" data-stim="gratingR">Grating →</button>
+      <button class="stim" data-stim="gratingL">Grating ←</button>
+      <button class="stim" data-stim="loom">Loom</button>
+      <button class="stim" data-stim="spiral">Rotation</button>
+      <button class="stim" data-stim="noise">Static (control)</button>
+      <label class="upload">Load video…<input id="fileInput" type="file" accept="video/*"></label>
+    </div>
+    <div class="sep"></div>
+    <div class="rail-group">
+      <div class="slider-wrap"><span class="rail-label">Eye gain</span><input id="gainSlider" type="range" min="0.4" max="3" step="0.05" value="1.4"><span class="val mono" id="gainVal">1.4</span></div>
+      <div class="slider-wrap"><span class="rail-label">Turn gain</span><input id="turnSlider" type="range" min="0.2" max="3" step="0.05" value="1.2"><span class="val mono" id="turnVal">1.2</span></div>
+      <div class="slider-wrap"><span class="rail-label">Stim speed</span><input id="speedSlider" type="range" min="0.2" max="3" step="0.05" value="1"><span class="val mono" id="speedVal">1.0</span></div>
+    </div>
+    <div class="sep"></div>
+    <div class="rail-group">
+      <button class="icon-btn" id="playBtn">Pause</button>
+      <button class="ghost" id="resetBtn">Reset fly</button>
+    </div>
+  </div>
+
+  <div class="console">
+    <section class="panel">
+      <div class="panel-head">
+        <span class="panel-tag">01 · <b>Retina</b></span>
+        <span class="panel-note" id="stimLabel">Grating →</span>
+      </div>
+      <div class="frame">
+        <canvas id="sourceCanvas" width="320" height="180"></canvas>
+        <canvas id="eyeOverlay" width="320" height="180"></canvas>
+      </div>
+      <div class="panel-note">288 simulated ommatidia (24×12) sample the scene — a real fly eye carries roughly 700–800 per side.</div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <span class="panel-tag">02 · <b>Optic lobe</b></span>
+      </div>
+      <div class="pathway">
+        <span class="node">R1–R6</span><span class="arrow">→</span>
+        <span class="node">Lamina</span><span class="arrow">→</span>
+        <span class="node">Medulla</span><span class="arrow">→</span>
+        <span class="node">Lobula plate (HS/VS)</span><span class="arrow">→</span>
+        <span class="node">Descending neurons</span>
+      </div>
+      <div class="frame">
+        <canvas id="motionCanvas" width="320" height="180"></canvas>
+      </div>
+      <div class="readouts">
+        <div class="readout"><span class="k">Yaw signal</span><span class="v tabular" id="yawVal">0.00</span></div>
+        <div class="readout thrust"><span class="k">Flux / thrust</span><span class="v tabular" id="thrustVal">0.00</span></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <span class="panel-tag">03 · <b>Flight arena</b></span>
+      </div>
+      <div class="frame" style="background:var(--surface-2);">
+        <canvas id="arenaCanvas" width="320" height="180"></canvas>
+      </div>
+      <div class="readouts">
+        <div class="readout"><span class="k">Heading</span><span class="v tabular" id="headingVal">0°</span></div>
+        <div class="readout"><span class="k">Speed</span><span class="v tabular" id="speedVal2">0.0</span></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="telemetry">
+    <div class="telemetry-head">
+      <span class="panel-tag">Telemetry · last 8s</span>
+      <div class="legend">
+        <span class="legend-item"><span class="swatch" style="background:var(--accent)"></span>yaw (turn signal)</span>
+        <span class="legend-item"><span class="swatch" style="background:var(--accent-2)"></span>thrust (retinal flux)</span>
+      </div>
+    </div>
+    <canvas id="chart" width="1100" height="130"></canvas>
+  </div>
+
+  <footer>
+    <strong>What this is:</strong> a client-side toy built around the Hassenstein–Reichardt correlator, the textbook circuit for elementary motion detection in the fly visual system — raw photoreceptor signal multiplied against a delayed neighbor, mirrored and subtracted, summed into the wide-field cells (HS/VS) that drive the optomotor steering reflex. <strong>What it isn't:</strong> the actual FlyWire connectome — the 140,000-plus-neuron wiring diagram from the Princeton-led consortium is far too large to simulate in a browser tab. It's a simplified stand-in that shares the real pathway's logic. (The imgur reference linked in chat couldn't be reached — outbound access to imgur.com is blocked by this environment's network policy — so this build is based on the written brief only.)
+  </footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- canvases ----------
+  var source = document.getElementById('sourceCanvas'), sctx = source.getContext('2d');
+  var overlay = document.getElementById('eyeOverlay'), octx = overlay.getContext('2d');
+  var motionCv = document.getElementById('motionCanvas'), mctx = motionCv.getContext('2d');
+  var arena = document.getElementById('arenaCanvas'), actx = arena.getContext('2d');
+  var chart = document.getElementById('chart'), chctx = chart.getContext('2d');
+
+  var W = source.width, H = source.height;
+
+  // ---------- ommatidia grid ----------
+  var COLS = 24, ROWS = 12;
+  var tiny = document.createElement('canvas'); tiny.width = COLS; tiny.height = ROWS;
+  var tctx = tiny.getContext('2d', { willReadFrequently: true });
+
+  var lum = new Float32Array(COLS*ROWS);
+  var prevLum = new Float32Array(COLS*ROWS);
+  var delayed = new Float32Array(COLS*ROWS);
+  var motion = new Float32Array(COLS*ROWS); // signed, per-cell horizontal correlator output
+
+  // ---------- stimulus generators ----------
+  var stimType = 'gratingR';
+  var phase = 0;
+  var video = document.createElement('video');
+  video.muted = true; video.loop = true; video.playsInline = true;
+  var usingVideo = false;
+
+  function drawGrating(dir){
+    var freq = 2 * Math.PI / 46;
+    for (var x = 0; x < W; x++){
+      var v = 0.5 + 0.5 * Math.sin(x*freq + phase*dir);
+      sctx.fillStyle = 'rgb(' + [v,v,v].map(function(c){return Math.round(c*255);}).join(',') + ')';
+      sctx.fillRect(x, 0, 1, H);
+    }
+  }
+  function drawLoom(){
+    sctx.fillStyle = '#111'; sctx.fillRect(0,0,W,H);
+    var t = (phase % 130) / 130;
+    var r = t * (W*0.75);
+    var g = sctx.createRadialGradient(W/2,H/2,Math.max(r-14,0),W/2,H/2,r);
+    g.addColorStop(0,'#f2f2f2'); g.addColorStop(1,'#111');
+    sctx.fillStyle = g;
+    sctx.beginPath(); sctx.arc(W/2,H/2,r,0,Math.PI*2); sctx.fill();
+  }
+  function drawSpiral(){
+    sctx.fillStyle = '#111'; sctx.fillRect(0,0,W,H);
+    var cx=W/2, cy=H/2, maxR = Math.hypot(W,H)/2;
+    var arms = 10;
+    sctx.save(); sctx.translate(cx,cy); sctx.rotate(phase*0.02);
+    for (var i=0;i<arms;i++){
+      var a0 = (i/arms)*Math.PI*2;
+      sctx.fillStyle = i%2===0 ? '#eee' : '#222';
+      sctx.beginPath(); sctx.moveTo(0,0);
+      sctx.arc(0,0,maxR,a0,a0+Math.PI/arms); sctx.closePath(); sctx.fill();
+    }
+    sctx.restore();
+  }
+  function drawNoise(){
+    var id = sctx.createImageData(W,H);
+    for (var i=0;i<id.data.length;i+=4){
+      var v = Math.random()*255;
+      id.data[i]=v; id.data[i+1]=v; id.data[i+2]=v; id.data[i+3]=255;
+    }
+    sctx.putImageData(id,0,0);
+  }
+
+  function renderSource(dt, speedMul){
+    if (usingVideo && video.readyState >= 2){
+      sctx.drawImage(video, 0, 0, W, H);
+      return;
+    }
+    phase += dt * 60 * speedMul;
+    if (stimType==='gratingR') drawGrating(1);
+    else if (stimType==='gratingL') drawGrating(-1);
+    else if (stimType==='loom') drawLoom();
+    else if (stimType==='spiral') drawSpiral();
+    else drawNoise();
+  }
+
+  // ---------- eye sampling + Reichardt correlator ----------
+  function sampleEye(){
+    tctx.drawImage(source, 0, 0, COLS, ROWS);
+    var d = tctx.getImageData(0,0,COLS,ROWS).data;
+    for (var i=0, p=0; i<COLS*ROWS; i++, p+=4){
+      lum[i] = (0.299*d[p] + 0.587*d[p+1] + 0.114*d[p+2]) / 255;
+    }
+  }
+
+  var TAU = 0.09; // delay-line time constant, seconds
+  function updateCorrelator(dt, gain){
+    var alpha = 1 - Math.exp(-dt/TAU);
+    var yawSum = 0, fluxSum = 0;
+    for (var y=0; y<ROWS; y++){
+      var rowOff = y*COLS;
+      for (var x=0; x<COLS; x++){
+        var i = rowOff + x;
+        delayed[i] += (prevLum[i] - delayed[i]) * alpha;
+        fluxSum += Math.abs(lum[i]-prevLum[i]);
+      }
+      for (var x2=0; x2<COLS-1; x2++){
+        var a = rowOff + x2, b = rowOff + x2 + 1;
+        var r = lum[a]*delayed[b] - lum[b]*delayed[a];
+        motion[a] = r * gain;
+        yawSum += r;
+      }
+      motion[rowOff+COLS-1] = motion[rowOff+COLS-2];
+    }
+    prevLum.set(lum);
+    var n = COLS*ROWS;
+    return { yaw: (yawSum/n) * gain * 40, flux: (fluxSum/n) * gain * 6 };
+  }
+
+  // ---------- overlay + motion heatmap drawing ----------
+  var cellW = W/COLS, cellH = H/ROWS;
+  function drawOverlay(){
+    octx.clearRect(0,0,W,H);
+    octx.strokeStyle = 'rgba(198,255,61,0.35)';
+    octx.lineWidth = 1;
+    for (var y=0;y<=ROWS;y++){ octx.beginPath(); octx.moveTo(0,y*cellH); octx.lineTo(W,y*cellH); octx.stroke(); }
+    for (var x=0;x<=COLS;x++){ octx.beginPath(); octx.moveTo(x*cellW,0); octx.lineTo(x*cellW,H); octx.stroke(); }
+  }
+  function drawMotionHeat(){
+    mctx.fillStyle = '#0b120d'; mctx.fillRect(0,0,W,H);
+    for (var y=0;y<ROWS;y++){
+      for (var x=0;x<COLS;x++){
+        var v = motion[y*COLS+x];
+        var mag = Math.min(Math.abs(v)*220, 1);
+        if (mag < 0.02) continue;
+        mctx.fillStyle = v > 0
+          ? 'rgba(198,255,61,' + mag.toFixed(3) + ')'
+          : 'rgba(255,122,84,' + mag.toFixed(3) + ')';
+        mctx.fillRect(x*cellW, y*cellH, cellW+0.5, cellH+0.5);
+      }
+    }
+  }
+
+  // ---------- fly avatar physics ----------
+  var fly = { x: W/2, y: H/2, heading: 0, angVel: 0, speed: 24 };
+  var trail = [];
+  function resetFly(){ fly.x=W/2; fly.y=H/2; fly.heading=Math.random()*Math.PI*2; fly.angVel=0; fly.speed=24; trail.length=0; }
+
+  function stepFly(dt, yaw, flux, turnGain){
+    var targetRate = yaw * turnGain * 26; // deg/s
+    targetRate = Math.max(-720, Math.min(720, targetRate));
+    fly.angVel += (targetRate - fly.angVel) * Math.min(1, dt*10);
+    fly.heading += fly.angVel * Math.PI/180 * dt;
+    var base = 22, thrust = Math.max(0, flux) * 30;
+    fly.speed += ((base + thrust) - fly.speed) * Math.min(1, dt*4);
+    fly.x += Math.cos(fly.heading) * fly.speed * dt;
+    fly.y += Math.sin(fly.heading) * fly.speed * dt;
+    if (fly.x < 0) fly.x += W; if (fly.x > W) fly.x -= W;
+    if (fly.y < 0) fly.y += H; if (fly.y > H) fly.y -= H;
+    trail.push({x:fly.x,y:fly.y});
+    if (trail.length > 90) trail.shift();
+  }
+  function drawFly(){
+    actx.fillStyle = '#1a2620'; actx.fillRect(0,0,W,H);
+    actx.strokeStyle='rgba(217,255,200,0.06)';
+    for(var gx=0;gx<W;gx+=20){actx.beginPath();actx.moveTo(gx,0);actx.lineTo(gx,H);actx.stroke();}
+    for(var gy=0;gy<H;gy+=20){actx.beginPath();actx.moveTo(0,gy);actx.lineTo(W,gy);actx.stroke();}
+
+    for (var i=1;i<trail.length;i++){
+      var a = i/trail.length;
+      actx.strokeStyle = 'rgba(198,255,61,' + (a*0.5).toFixed(3) + ')';
+      actx.lineWidth = 1.5;
+      actx.beginPath(); actx.moveTo(trail[i-1].x, trail[i-1].y); actx.lineTo(trail[i].x, trail[i].y); actx.stroke();
+    }
+
+    actx.save();
+    actx.translate(fly.x, fly.y);
+    actx.rotate(fly.heading);
+    actx.fillStyle = 'rgba(198,255,61,0.35)';
+    actx.beginPath(); actx.ellipse(-2,-5,5,3,0.3,0,Math.PI*2); actx.fill();
+    actx.beginPath(); actx.ellipse(-2,5,5,3,-0.3,0,Math.PI*2); actx.fill();
+    actx.fillStyle = '#c6ff3d';
+    actx.beginPath(); actx.ellipse(0,0,7,3.4,0,0,Math.PI*2); actx.fill();
+    actx.fillStyle = '#0b120d';
+    actx.beginPath(); actx.arc(5,0,1.6,0,Math.PI*2); actx.fill();
+    actx.restore();
+  }
+
+  // ---------- telemetry chart ----------
+  var HIST = 480; // samples
+  var yawHist = new Float32Array(HIST);
+  var thrustHist = new Float32Array(HIST);
+  var histPos = 0, histFilled = 0;
+
+  function pushHist(yaw, thrust){
+    yawHist[histPos] = Math.max(-1,Math.min(1,yaw));
+    thrustHist[histPos] = Math.max(-1,Math.min(1,thrust));
+    histPos = (histPos+1) % HIST;
+    histFilled = Math.min(HIST, histFilled+1);
+  }
+
+  function drawChart(){
+    var cw = chart.width, ch = chart.height;
+    chctx.clearRect(0,0,cw,ch);
+    var padL = 34, padR = 10, padT = 8, padB = 16;
+    var plotW = cw - padL - padR, plotH = ch - padT - padB;
+
+    chctx.strokeStyle = 'rgba(217,255,200,0.10)';
+    chctx.fillStyle = '#5f7568';
+    chctx.font = '10px "IBM Plex Mono", monospace';
+    chctx.textAlign = 'right'; chctx.textBaseline='middle';
+    [-1,-0.5,0,0.5,1].forEach(function(v){
+      var y = padT + (1-(v+1)/2)*plotH;
+      chctx.beginPath(); chctx.moveTo(padL,y); chctx.lineTo(cw-padR,y); chctx.stroke();
+      chctx.fillText(v.toFixed(1), padL-6, y);
+    });
+    chctx.strokeStyle = 'rgba(217,255,200,0.22)';
+    var zeroY = padT + plotH/2;
+    chctx.beginPath(); chctx.moveTo(padL,zeroY); chctx.lineTo(cw-padR,zeroY); chctx.stroke();
+
+    function drawLine(hist, color){
+      chctx.beginPath();
+      var n = histFilled;
+      for (var k=0;k<n;k++){
+        var idx = (histPos - n + k + HIST*2) % HIST;
+        var x = padL + (k/(HIST-1)) * plotW;
+        var y = padT + (1-(hist[idx]+1)/2) * plotH;
+        if (k===0) chctx.moveTo(x,y); else chctx.lineTo(x,y);
+      }
+      chctx.strokeStyle = color; chctx.lineWidth = 1.6; chctx.stroke();
+      if (n>0){
+        var lastIdx = (histPos - 1 + HIST) % HIST;
+        var lx = padL + ((n-1)/(HIST-1)) * plotW;
+        var ly = padT + (1-(hist[lastIdx]+1)/2) * plotH;
+        chctx.fillStyle = color;
+        chctx.beginPath(); chctx.arc(lx,ly,2.6,0,Math.PI*2); chctx.fill();
+      }
+    }
+    drawLine(yawHist, '#c6ff3d');
+    drawLine(thrustHist, '#ff7a54');
+  }
+
+  // ---------- UI wiring ----------
+  var gain = 1.4, turnGain = 1.2, speedMul = 1.0, running = true;
+  document.getElementById('gainSlider').addEventListener('input', function(e){
+    gain = parseFloat(e.target.value); document.getElementById('gainVal').textContent = gain.toFixed(2);
+  });
+  document.getElementById('turnSlider').addEventListener('input', function(e){
+    turnGain = parseFloat(e.target.value); document.getElementById('turnVal').textContent = turnGain.toFixed(2);
+  });
+  document.getElementById('speedSlider').addEventListener('input', function(e){
+    speedMul = parseFloat(e.target.value); document.getElementById('speedVal').textContent = speedMul.toFixed(2);
+  });
+  document.getElementById('gainVal').textContent = gain.toFixed(2);
+  document.getElementById('turnVal').textContent = turnGain.toFixed(2);
+  document.getElementById('speedVal').textContent = speedMul.toFixed(2);
+
+  var stimButtons = Array.prototype.slice.call(document.querySelectorAll('button.stim'));
+  var labels = {gratingR:'Grating →', gratingL:'Grating ←', loom:'Loom', spiral:'Rotation', noise:'Static (control)'};
+  function setActiveStim(type){
+    stimType = type; usingVideo = false;
+    stimButtons.forEach(function(b){ b.classList.toggle('active', b.dataset.stim===type); });
+    document.getElementById('stimLabel').textContent = labels[type];
+  }
+  stimButtons.forEach(function(b){ b.addEventListener('click', function(){ setActiveStim(b.dataset.stim); }); });
+  setActiveStim('gratingR');
+
+  document.getElementById('fileInput').addEventListener('change', function(e){
+    var f = e.target.files[0]; if (!f) return;
+    var url = URL.createObjectURL(f);
+    video.src = url; video.play();
+    usingVideo = true;
+    stimButtons.forEach(function(b){ b.classList.remove('active'); });
+    document.getElementById('stimLabel').textContent = 'Uploaded video';
+  });
+
+  var playBtn = document.getElementById('playBtn');
+  playBtn.addEventListener('click', function(){
+    running = !running; playBtn.textContent = running ? 'Pause' : 'Resume';
+    if (usingVideo){ if (running) video.play(); else video.pause(); }
+  });
+  document.getElementById('resetBtn').addEventListener('click', resetFly);
+
+  // ---------- main loop ----------
+  var last = performance.now();
+  var smoothYaw = 0, smoothThrust = 0;
+
+  function frame(now){
+    var dt = Math.min(0.05, (now-last)/1000); last = now;
+    if (running){
+      renderSource(dt, speedMul);
+      sampleEye();
+      var sig = updateCorrelator(dt, gain);
+      smoothYaw += (sig.yaw - smoothYaw) * 0.25;
+      smoothThrust += (sig.flux - smoothThrust) * 0.25;
+
+      drawOverlay();
+      drawMotionHeat();
+      stepFly(dt, smoothYaw, smoothThrust, turnGain);
+      drawFly();
+      pushHist(smoothYaw, smoothThrust);
+      drawChart();
+
+      document.getElementById('yawVal').textContent = smoothYaw.toFixed(2);
+      document.getElementById('thrustVal').textContent = smoothThrust.toFixed(2);
+      document.getElementById('headingVal').textContent = Math.round(((fly.heading*180/Math.PI)%360+360)%360) + '°';
+      document.getElementById('speedVal2').textContent = fly.speed.toFixed(1);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  resetFly();
+  drawOverlay();
+  requestAnimationFrame(frame);
+
+  // ---------- hot reload state (position survives republish) ----------
+  function snapshot(){ return { fly: fly, trail: trail, stimType: usingVideo ? 'gratingR' : stimType }; }
+  if (window.claude && window.claude.hot){
+    window.claude.hot.snapshot(snapshot);
+    var data = window.claude.hot.data;
+    if (data && data.fly){ Object.assign(fly, data.fly); if (data.trail) trail = data.trail; if (data.stimType) setActiveStim(data.stimType); }
+  }
+})();
+</script>
