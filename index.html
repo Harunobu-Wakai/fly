@@ -1,4 +1,4 @@
-<title>Optomotor Console</title>
+<title>オプトモーター・コンソール</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -301,96 +301,96 @@
 
 <header>
   <div>
-    <div class="kicker">Drosophila visual-motor loop · toy model</div>
-    <h1>Optomotor Console</h1>
+    <div class="kicker">ショウジョウバエ 視覚運動ループ・簡易モデル</div>
+    <h1>オプトモーター・コンソール</h1>
   </div>
-  <p>Feed a moving image to a simulated compound eye and watch a Hassenstein–Reichardt correlator turn optic flow into steering — the same reflex that keeps a real fly's gaze locked to the world.</p>
+  <p>動く映像を模擬複眼に見せると、Hassenstein–Reichardt相関器がオプティックフロー(視野の動き)を旋回指令に変換します——本物のハエが視界を世界に固定し続けるのと同じ反射です。</p>
 </header>
 
 <main>
   <div class="rail">
     <div class="rail-group">
-      <span class="rail-label">Stimulus</span>
-      <button class="stim" data-stim="gratingR">Grating →</button>
-      <button class="stim" data-stim="gratingL">Grating ←</button>
-      <button class="stim" data-stim="loom">Loom</button>
-      <button class="stim" data-stim="spiral">Rotation</button>
-      <button class="stim" data-stim="noise">Static (control)</button>
-      <label class="upload">Load video…<input id="fileInput" type="file" accept="video/*"></label>
+      <span class="rail-label">刺激</span>
+      <button class="stim" data-stim="gratingR">縞模様 →</button>
+      <button class="stim" data-stim="gratingL">縞模様 ←</button>
+      <button class="stim" data-stim="loom">接近(Loom)</button>
+      <button class="stim" data-stim="spiral">回転</button>
+      <button class="stim" data-stim="noise">静止ノイズ(対照)</button>
+      <label class="upload">動画を読み込む…<input id="fileInput" type="file" accept="video/*"></label>
     </div>
     <div class="sep"></div>
     <div class="rail-group">
-      <div class="slider-wrap"><span class="rail-label">Eye gain</span><input id="gainSlider" type="range" min="0.4" max="3" step="0.05" value="1.4"><span class="val mono" id="gainVal">1.4</span></div>
-      <div class="slider-wrap"><span class="rail-label">Turn gain</span><input id="turnSlider" type="range" min="0.2" max="3" step="0.05" value="1.2"><span class="val mono" id="turnVal">1.2</span></div>
-      <div class="slider-wrap"><span class="rail-label">Stim speed</span><input id="speedSlider" type="range" min="0.2" max="3" step="0.05" value="1"><span class="val mono" id="speedVal">1.0</span></div>
+      <div class="slider-wrap"><span class="rail-label">眼の感度</span><input id="gainSlider" type="range" min="0.4" max="3" step="0.05" value="1.4"><span class="val mono" id="gainVal">1.4</span></div>
+      <div class="slider-wrap"><span class="rail-label">旋回ゲイン</span><input id="turnSlider" type="range" min="0.2" max="3" step="0.05" value="1.2"><span class="val mono" id="turnVal">1.2</span></div>
+      <div class="slider-wrap"><span class="rail-label">刺激速度</span><input id="speedSlider" type="range" min="0.2" max="3" step="0.05" value="1"><span class="val mono" id="speedVal">1.0</span></div>
     </div>
     <div class="sep"></div>
     <div class="rail-group">
-      <button class="icon-btn" id="playBtn">Pause</button>
-      <button class="ghost" id="resetBtn">Reset fly</button>
+      <button class="icon-btn" id="playBtn">一時停止</button>
+      <button class="ghost" id="resetBtn">ハエをリセット</button>
     </div>
   </div>
 
   <div class="console">
     <section class="panel">
       <div class="panel-head">
-        <span class="panel-tag">01 · <b>Retina</b></span>
-        <span class="panel-note" id="stimLabel">Grating →</span>
+        <span class="panel-tag">01 · <b>網膜</b></span>
+        <span class="panel-note" id="stimLabel">縞模様 →</span>
       </div>
       <div class="frame">
         <canvas id="sourceCanvas" width="320" height="180"></canvas>
         <canvas id="eyeOverlay" width="320" height="180"></canvas>
       </div>
-      <div class="panel-note">288 simulated ommatidia (24×12) sample the scene — a real fly eye carries roughly 700–800 per side.</div>
+      <div class="panel-note">288個の模擬個眼(24×12)でシーンをサンプリング——実際のハエの複眼は片眼あたり約700〜800個の個眼を持つ。</div>
     </section>
 
     <section class="panel">
       <div class="panel-head">
-        <span class="panel-tag">02 · <b>Optic lobe</b></span>
+        <span class="panel-tag">02 · <b>視葉</b></span>
       </div>
       <div class="pathway">
-        <span class="node">R1–R6</span><span class="arrow">→</span>
-        <span class="node">Lamina</span><span class="arrow">→</span>
-        <span class="node">Medulla</span><span class="arrow">→</span>
-        <span class="node">Lobula plate (HS/VS)</span><span class="arrow">→</span>
-        <span class="node">Descending neurons</span>
+        <span class="node">R1–R6(視細胞)</span><span class="arrow">→</span>
+        <span class="node">ラミナ</span><span class="arrow">→</span>
+        <span class="node">メデュラ</span><span class="arrow">→</span>
+        <span class="node">ロブラ板(HS/VS)</span><span class="arrow">→</span>
+        <span class="node">下行性ニューロン</span>
       </div>
       <div class="frame">
         <canvas id="motionCanvas" width="320" height="180"></canvas>
       </div>
       <div class="readouts">
-        <div class="readout"><span class="k">Yaw signal</span><span class="v tabular" id="yawVal">0.00</span></div>
-        <div class="readout thrust"><span class="k">Flux / thrust</span><span class="v tabular" id="thrustVal">0.00</span></div>
+        <div class="readout"><span class="k">旋回信号</span><span class="v tabular" id="yawVal">0.00</span></div>
+        <div class="readout thrust"><span class="k">変化量/推力</span><span class="v tabular" id="thrustVal">0.00</span></div>
       </div>
     </section>
 
     <section class="panel">
       <div class="panel-head">
-        <span class="panel-tag">03 · <b>Flight arena</b></span>
+        <span class="panel-tag">03 · <b>飛行アリーナ</b></span>
       </div>
       <div class="frame" style="background:var(--surface-2);">
         <canvas id="arenaCanvas" width="320" height="180"></canvas>
       </div>
       <div class="readouts">
-        <div class="readout"><span class="k">Heading</span><span class="v tabular" id="headingVal">0°</span></div>
-        <div class="readout"><span class="k">Speed</span><span class="v tabular" id="speedVal2">0.0</span></div>
+        <div class="readout"><span class="k">進行方向</span><span class="v tabular" id="headingVal">0°</span></div>
+        <div class="readout"><span class="k">速度</span><span class="v tabular" id="speedVal2">0.0</span></div>
       </div>
     </section>
   </div>
 
   <div class="telemetry">
     <div class="telemetry-head">
-      <span class="panel-tag">Telemetry · last 8s</span>
+      <span class="panel-tag">テレメトリ・直近8秒</span>
       <div class="legend">
-        <span class="legend-item"><span class="swatch" style="background:var(--accent)"></span>yaw (turn signal)</span>
-        <span class="legend-item"><span class="swatch" style="background:var(--accent-2)"></span>thrust (retinal flux)</span>
+        <span class="legend-item"><span class="swatch" style="background:var(--accent)"></span>旋回信号(yaw)</span>
+        <span class="legend-item"><span class="swatch" style="background:var(--accent-2)"></span>推力(網膜変化量)</span>
       </div>
     </div>
     <canvas id="chart" width="1100" height="130"></canvas>
   </div>
 
   <footer>
-    <strong>What this is:</strong> a client-side toy built around the Hassenstein–Reichardt correlator, the textbook circuit for elementary motion detection in the fly visual system — raw photoreceptor signal multiplied against a delayed neighbor, mirrored and subtracted, summed into the wide-field cells (HS/VS) that drive the optomotor steering reflex. <strong>What it isn't:</strong> the actual FlyWire connectome — the 140,000-plus-neuron wiring diagram from the Princeton-led consortium is far too large to simulate in a browser tab. It's a simplified stand-in that shares the real pathway's logic. (The imgur reference linked in chat couldn't be reached — outbound access to imgur.com is blocked by this environment's network policy — so this build is based on the written brief only.)
+    <strong>これは何か:</strong> Hassenstein–Reichardt相関器という、ハエの視覚系における初等運動検出の教科書的回路を実装したブラウザ上のおもちゃです——ある個眼の生信号を、隣の個眼の遅延信号と掛け合わせ、左右対称のペアで差し引くことで局所的な動きの向きを検出し、それを実際のロブラ板の広視野細胞(HS/VS)のように集約してオプトモーター旋回反射の信号を作っています。<strong>これではないもの:</strong> 実際のFlyWireコネクトーム——プリンストン大学らのコンソーシアムが構築した14万個以上のニューロンから成る配線図——そのものではありません。あれはブラウザ上でシミュレートするには大きすぎるため、本物の回路のロジックだけを取り出した簡易モデルです。(チャットで共有されたimgurのリンクはこの環境のネットワークポリシーによりimgur.comへのアクセスがブロックされており内容を確認できなかったため、このビルドはテキストで書かれた依頼内容のみをもとに作成しています。)
   </footer>
 </main>
 
@@ -648,7 +648,7 @@
   document.getElementById('speedVal').textContent = speedMul.toFixed(2);
 
   var stimButtons = Array.prototype.slice.call(document.querySelectorAll('button.stim'));
-  var labels = {gratingR:'Grating →', gratingL:'Grating ←', loom:'Loom', spiral:'Rotation', noise:'Static (control)'};
+  var labels = {gratingR:'縞模様 →', gratingL:'縞模様 ←', loom:'接近(Loom)', spiral:'回転', noise:'静止ノイズ(対照)'};
   function setActiveStim(type){
     stimType = type; usingVideo = false;
     stimButtons.forEach(function(b){ b.classList.toggle('active', b.dataset.stim===type); });
@@ -663,12 +663,12 @@
     video.src = url; video.play();
     usingVideo = true;
     stimButtons.forEach(function(b){ b.classList.remove('active'); });
-    document.getElementById('stimLabel').textContent = 'Uploaded video';
+    document.getElementById('stimLabel').textContent = 'アップロードされた動画';
   });
 
   var playBtn = document.getElementById('playBtn');
   playBtn.addEventListener('click', function(){
-    running = !running; playBtn.textContent = running ? 'Pause' : 'Resume';
+    running = !running; playBtn.textContent = running ? '一時停止' : '再開';
     if (usingVideo){ if (running) video.play(); else video.pause(); }
   });
   document.getElementById('resetBtn').addEventListener('click', resetFly);

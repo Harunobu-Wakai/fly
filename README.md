@@ -1,52 +1,27 @@
-# Optomotor Console
+# オプトモーター・コンソール
 
-A self-contained, single-file browser toy that simulates a fly's compound eye
-watching a moving stimulus, and drives a simple animated fly's steering from
-that visual input in real time.
+ハエの複眼が動く刺激を見ている様子をシミュレートし、その視覚入力からアニメーションのハエの旋回動作をリアルタイムで駆動する、単一ファイル完結のブラウザおもちゃです。
 
-Open `index.html` directly in a browser — no build step, no dependencies.
+`index.html` をブラウザで直接開くだけで動きます——ビルド不要、依存関係なし。
 
-## Background
+## 背景
 
-This started from a GIGAZINE article about
-[FlyWire](https://flywire.ai), the Princeton-led consortium that produced the
-first complete connectome (full wiring diagram) of the *Drosophila
-melanogaster* brain — roughly 140,000 neurons and their synapses. That dataset
-is far too large to simulate in a browser tab, so this project is not a
-literal connectome simulation. Instead it models the specific, well-studied
-circuit responsible for one of the fly's most famous visual behaviors: the
-**optomotor reflex**, the reaction that keeps a fly's gaze/heading stable
-against the visual world.
+きっかけはGIGAZINEの記事で紹介されていた
+[FlyWire](https://flywire.ai)です。プリンストン大学が率いる科学コンソーシアムで、キイロショウジョウバエ(*Drosophila melanogaster*)の脳の完全なコネクトーム(配線図)——ニューロンとシナプスあわせて約14万個規模——を世界で初めて構築しました。このデータセットはブラウザ上でシミュレートするには大きすぎるため、本プロジェクトは実際のコネクトームをそのまま再現したものではありません。代わりに、ハエの最も有名な視覚行動のひとつである**オプトモーター反射**(視界に対して自分の向き・視線を安定させ続ける反射)を担う、よく研究されている特定の回路だけをモデル化しています。
 
-## How it works
+## 仕組み
 
-1. **Retina** — a stimulus (a moving grating, a looming disc, a rotating
-   pattern, static noise, or a video file you upload) is sampled by a
-   24×12 grid of simulated ommatidia (a real fly eye has roughly 700–800
-   per side).
-2. **Optic lobe** — each pair of neighboring ommatidia feeds a
-   [Hassenstein–Reichardt correlator](https://en.wikipedia.org/wiki/Reichardt_detector):
-   the textbook elementary-motion-detector circuit in fly vision. Raw signal
-   from one ommatidium is multiplied against a time-delayed signal from its
-   neighbor, mirrored, and subtracted — giving a signed local motion estimate.
-   These are pooled the way real lobula-plate tangential cells (HS/VS) pool
-   local detectors into a wide-field turn signal.
-3. **Descending neurons → motor** — the pooled signal drives the simulated
-   fly's angular velocity (turn signal) and forward speed (from overall
-   retinal flux, as a stand-in for looming/arousal-driven thrust), animated
-   in the flight arena panel.
-4. **Telemetry** — both signals are plotted live over the trailing 8 seconds.
+1. **網膜(Retina)** — 刺激(動く縞模様、迫ってくる円=loom、回転パターン、静止ノイズ、またはアップロードした動画ファイル)を24×12個の模擬個眼のグリッドでサンプリングします(実際のハエの複眼は片眼あたり約700〜800個の個眼を持ちます)。
+2. **視葉(Optic lobe)** — 隣接する個眼のペアごとに[Hassenstein–Reichardt相関器](https://en.wikipedia.org/wiki/Reichardt_detector)(ハエ視覚における初等運動検出の教科書的回路)を計算します。ある個眼の生信号を隣の個眼の時間遅延信号と掛け合わせ、左右対称のペアで差し引くことで、符号付きの局所的な動き推定値を得ます。これを実際のロブラ板の広視野細胞(HS/VS)と同じように集約し、旋回のための信号にまとめます。
+3. **下行性ニューロン→運動** — 集約された信号が、模擬ハエの角速度(旋回信号)と前進速度(網膜全体の変化量から、迫ってくる刺激や興奮による推力の代わりとして算出)を駆動し、飛行アリーナ パネルでアニメーションします。
+4. **テレメトリ** — 両方の信号を直近8秒間、リアルタイムでプロットします。
 
-## Controls
+## 操作
 
-- **Stimulus presets** — canonical vision-science stimuli: drifting gratings
-  (left/right), a looming disc, a rotating pattern, and a static-noise control
-  (no coherent motion, so the turn signal should hover near zero).
-- **Load video…** — feed your own video file through the same pipeline.
-- **Eye gain / Turn gain / Stimulus speed** — sliders to tune sensitivity.
+- **刺激プリセット** — 視覚科学で定番の刺激: 左右に流れる縞模様、迫ってくる円、回転パターン、そして静止ノイズ(対照条件・首尾一貫した動きがないため旋回信号はほぼゼロになるはず)。
+- **動画を読み込む…** — 自分の動画ファイルを同じパイプラインに流し込めます。
+- **眼の感度 / 旋回ゲイン / 刺激速度** — 感度を調整するスライダー。
 
-## Caveats
+## 注意点
 
-This is a simplified, illustrative model for play and intuition-building, not
-a research-grade simulation of fly neurobiology or of the actual FlyWire
-connectome.
+これは遊びと直感の獲得のための簡略化した例示モデルであり、ハエの神経生物学や実際のFlyWireコネクトームを研究レベルで再現したものではありません。
