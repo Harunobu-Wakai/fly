@@ -1,716 +1,1027 @@
-<title>オプトモーター・コンソール</title>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>極楽スロット 戒名大当たり</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Yuji+Syuku&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0b120d;
-    --surface:#121b15;
-    --surface-2:#1a2620;
-    --surface-3:#22321a;
-    --line:rgba(217,255,200,0.11);
-    --line-strong:rgba(217,255,200,0.22);
-    --text:#eaf2e6;
-    --text-dim:#9fb3a4;
-    --text-faint:#5f7568;
-    --accent:#c6ff3d;
-    --accent-soft:rgba(198,255,61,0.16);
-    --accent-dim:#7a9c2e;
-    --accent-2:#ff7a54;
-    --accent-2-soft:rgba(255,122,84,0.16);
+    --black:#070402;
+    --black-2:#120b06;
+    --black-3:#1c1108;
+    --gold:#e8c15a;
+    --gold-bright:#ffe6a0;
+    --gold-dim:#8a6b2a;
+    --red:#ff3d5a;
+    --red-dim:#7a1f2c;
+    --blue:#3dd0ff;
+    --purple:#c04dff;
+    --green:#3dff8f;
+    --text:#f5ead0;
+    --text-dim:#b6a582;
+    --card:#150d06;
   }
-
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background:var(--bg);
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{
+    margin:0; padding:0; height:100%;
+    background:
+      radial-gradient(ellipse at 50% -10%, #2a1a08 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 110%, #200d10 0%, transparent 60%),
+      var(--black);
     color:var(--text);
-    font-family:"IBM Plex Sans",system-ui,sans-serif;
-    padding:20px 20px 40px;
-    display:flex;
-    flex-direction:column;
-    gap:20px;
+    font-family:"Shippori Mincho", serif;
+    overscroll-behavior:none;
+  }
+  #app{
+    max-width:480px;
+    margin:0 auto;
     min-height:100vh;
-  }
-  ::selection{ background:var(--accent-soft); }
-
-  .mono{ font-family:"IBM Plex Mono","SF Mono",monospace; }
-  .tabular{ font-variant-numeric:tabular-nums; }
-
-  a{ color:var(--accent); }
-
-  /* ---------- header ---------- */
-  header{
-    max-width:1180px;
-    margin:0 auto;
-    width:100%;
-    display:flex;
-    flex-wrap:wrap;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px 24px;
-    border-bottom:1px solid var(--line);
-    padding-bottom:16px;
-  }
-  .kicker{
-    font-family:"IBM Plex Mono",monospace;
-    font-size:11px;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    color:var(--accent-dim);
-  }
-  h1{
-    font-family:"Fraunces",serif;
-    font-style:italic;
-    font-weight:500;
-    font-size:clamp(26px,4vw,38px);
-    margin:2px 0 0;
-    color:var(--text);
-    text-wrap:balance;
-  }
-  header p{
-    margin:0;
-    max-width:46ch;
-    color:var(--text-dim);
-    font-size:13.5px;
-    line-height:1.5;
-  }
-
-  main{
-    max-width:1180px;
-    margin:0 auto;
-    width:100%;
+    min-height:100dvh;
+    position:relative;
+    overflow:hidden;
     display:flex;
     flex-direction:column;
-    gap:18px;
+    border-left:1px solid rgba(232,193,90,0.12);
+    border-right:1px solid rgba(232,193,90,0.12);
   }
+  .screen{
+    display:none;
+    flex-direction:column;
+    flex:1;
+    padding:22px 18px 26px;
+    animation:fadein .4s ease;
+    position:relative;
+  }
+  .screen.active{ display:flex; }
+  @keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
 
-  /* ---------- control rail ---------- */
-  .rail{
-    display:flex;
-    flex-wrap:wrap;
-    align-items:center;
-    gap:10px 14px;
-    background:var(--surface);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:12px 16px;
+  h1,h2{ margin:0; font-weight:600; }
+  .brand-kicker{
+    font-family:"Yuji Syuku", cursive;
+    letter-spacing:.28em;
+    font-size:13px;
+    color:var(--gold);
+    text-align:center;
+    opacity:.85;
   }
-  .rail-group{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
-  .rail-label{
-    font-family:"IBM Plex Mono",monospace;
-    font-size:10px;
-    letter-spacing:.1em;
-    text-transform:uppercase;
-    color:var(--text-faint);
-    margin-right:2px;
+  .brand-title{
+    font-family:"Yuji Syuku", cursive;
+    font-size:clamp(30px,9vw,42px);
+    text-align:center;
+    margin:8px 0 4px;
+    letter-spacing:.05em;
+    color:var(--gold-bright);
+    text-shadow:
+      0 0 6px rgba(255,224,138,.55),
+      0 0 18px rgba(255,61,90,.45),
+      0 0 32px rgba(255,61,90,.25);
+    animation:neon-flicker 3.4s infinite;
   }
-  .sep{ width:1px; align-self:stretch; background:var(--line); margin:0 2px; }
-
-  button.stim, label.upload{
-    font-family:"IBM Plex Mono",monospace;
-    font-size:11.5px;
-    letter-spacing:.03em;
+  @keyframes neon-flicker{
+    0%,19%,21%,23%,55%,57%,100%{ opacity:1; }
+    20%,22%,56%{ opacity:.72; }
+  }
+  .sub-title{
+    text-align:center;
     color:var(--text-dim);
-    background:var(--surface-2);
-    border:1px solid var(--line);
-    border-radius:6px;
-    padding:7px 11px;
+    font-size:12.5px;
+    letter-spacing:.12em;
+    margin-bottom:18px;
+  }
+
+  /* decorative neon frame */
+  .neon-frame{
+    position:absolute; inset:10px;
+    pointer-events:none;
+    border:1px solid rgba(232,193,90,0.25);
+    border-radius:16px;
+    box-shadow: inset 0 0 24px rgba(255,61,90,0.06);
+  }
+
+  /* ---------- start screen ---------- */
+  .start-body{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:20px;
+  }
+  .field{ display:flex; flex-direction:column; gap:8px; }
+  .field label{
+    font-size:12px; letter-spacing:.1em; color:var(--gold);
+  }
+  .field input[type=text]{
+    background:var(--black-3);
+    border:1px solid var(--gold-dim);
+    border-radius:10px;
+    color:var(--text);
+    font-family:"Shippori Mincho", serif;
+    font-size:19px;
+    padding:12px 14px;
+    outline:none;
+    letter-spacing:.06em;
+  }
+  .field input[type=text]:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(232,193,90,0.15);
+  }
+  .field .hint{ font-size:11px; color:var(--text-dim); }
+  .field .error{ font-size:11.5px; color:var(--red); min-height:14px; }
+
+  .gender-row{ display:flex; gap:10px; }
+  .gender-btn{
+    flex:1;
+    padding:12px 8px;
+    text-align:center;
+    border-radius:10px;
+    border:1px solid var(--gold-dim);
+    background:var(--black-3);
+    color:var(--text-dim);
+    font-family:"Shippori Mincho", serif;
+    font-size:15px;
     cursor:pointer;
-    transition:border-color .15s, color .15s, background .15s;
+    transition:all .15s;
+  }
+  .gender-btn.selected{
+    background:linear-gradient(180deg, rgba(232,193,90,.28), rgba(232,193,90,.08));
+    border-color:var(--gold);
+    color:var(--gold-bright);
+    box-shadow:0 0 10px rgba(232,193,90,.25);
+  }
+
+  .spin-btn{
+    position:relative;
+    margin-top:6px;
+    padding:16px;
+    border:none;
+    border-radius:50px;
+    background:linear-gradient(180deg,#ff5a72,#c21f39 70%);
+    color:#fff8ea;
+    font-family:"Yuji Syuku", cursive;
+    font-size:20px;
+    letter-spacing:.2em;
+    cursor:pointer;
+    box-shadow:0 4px 0 #7a0f1f, 0 6px 18px rgba(255,61,90,.4);
+    transition:transform .08s;
+  }
+  .spin-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 #7a0f1f, 0 3px 10px rgba(255,61,90,.35); }
+
+  .disclaimer{
+    text-align:center;
+    color:var(--text-dim);
+    font-size:10.5px;
+    line-height:1.6;
+    margin-top:16px;
+    opacity:.75;
+  }
+
+  /* ---------- slot screen ---------- */
+  .beads-row{
+    display:flex;
+    justify-content:center;
+    gap:9px;
+    padding:6px 0 14px;
+  }
+  .bead{
+    width:15px; height:15px; border-radius:50%;
+    background:#2b2119;
+    box-shadow:inset 0 0 3px #000, 0 1px 2px rgba(0,0,0,.6);
+    transition:background .4s, box-shadow .4s;
+  }
+  .bead.white{ background:#f4f4f4; box-shadow:0 0 8px #fff, inset 0 0 3px #ccc; }
+  .bead.blue{ background:#3dd0ff; box-shadow:0 0 10px #3dd0ff; }
+  .bead.gold{ background:#ffd24d; box-shadow:0 0 12px #ffd24d; }
+  .bead.rainbow{
+    background:linear-gradient(90deg,#ff3d5a,#ffd24d,#3dff8f,#3dd0ff,#c04dff);
+    box-shadow:0 0 16px #fff;
+    animation:rainbow-pulse 1s infinite;
+  }
+  @keyframes rainbow-pulse{ 0%,100%{ filter:brightness(1); } 50%{ filter:brightness(1.5); } }
+
+  .machine{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:14px;
+    position:relative;
+    border-radius:18px;
+    padding:16px 12px 20px;
+    background:
+      linear-gradient(180deg, rgba(255,61,90,.06), transparent 30%),
+      var(--black-2);
+    border:1px solid rgba(232,193,90,.2);
+    box-shadow: inset 0 0 30px rgba(0,0,0,.6);
+    overflow:hidden;
+  }
+
+  .reels{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+  }
+  .reel{
+    flex:1;
+    min-width:0;
+    background:linear-gradient(180deg,#0c0704,#1a0f06);
+    border:2px solid var(--gold-dim);
+    border-radius:10px;
+    height:150px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    box-shadow:inset 0 6px 14px rgba(0,0,0,.7), inset 0 -6px 14px rgba(0,0,0,.7);
+    overflow:hidden;
+  }
+  .reel .reel-text{
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    font-size:22px;
+    letter-spacing:.14em;
+    color:var(--gold-bright);
+    text-shadow:0 0 6px rgba(255,224,138,.5);
     white-space:nowrap;
   }
-  button.stim:hover, label.upload:hover{ border-color:var(--line-strong); color:var(--text); }
-  button.stim.active{
-    background:var(--accent-soft);
-    border-color:var(--accent-dim);
-    color:var(--accent);
+  .reel.spinning .reel-text{
+    filter:blur(1.5px);
+    opacity:.85;
   }
-  button.icon-btn{
-    font-family:"IBM Plex Mono",monospace;
-    font-size:11.5px;
-    color:var(--bg);
-    background:var(--accent);
-    border:1px solid var(--accent);
-    border-radius:6px;
-    padding:7px 14px;
-    cursor:pointer;
-    font-weight:600;
+  .reel.stopped{
+    animation:reel-bounce .3s ease;
+    border-color:var(--gold);
+    box-shadow:inset 0 6px 14px rgba(0,0,0,.7), inset 0 -6px 14px rgba(0,0,0,.7), 0 0 14px rgba(232,193,90,.5);
   }
-  button.icon-btn:hover{ filter:brightness(1.08); }
-  button.ghost{
-    font-family:"IBM Plex Mono",monospace;
-    font-size:11.5px;
-    color:var(--text-dim);
-    background:transparent;
-    border:1px solid var(--line);
-    border-radius:6px;
-    padding:7px 12px;
-    cursor:pointer;
+  @keyframes reel-bounce{
+    0%{ transform:scaleY(0.9); } 55%{ transform:scaleY(1.06); } 100%{ transform:scaleY(1); }
   }
-  button.ghost:hover{ border-color:var(--line-strong); color:var(--text); }
-  input[type=file]{ display:none; }
-
-  .slider-wrap{ display:flex; align-items:center; gap:7px; }
-  .slider-wrap span.val{ width:2.6ch; text-align:right; color:var(--accent); font-size:11.5px; }
-  input[type=range]{
-    -webkit-appearance:none; appearance:none;
-    width:88px; height:3px; border-radius:2px;
-    background:var(--line-strong);
-    outline:none;
-  }
-  input[type=range]::-webkit-slider-thumb{
-    -webkit-appearance:none; appearance:none;
-    width:13px; height:13px; border-radius:50%;
-    background:var(--accent); cursor:pointer;
-    border:2px solid var(--bg);
-  }
-  input[type=range]::-moz-range-thumb{
-    width:13px; height:13px; border-radius:50%;
-    background:var(--accent); cursor:pointer; border:2px solid var(--bg);
-  }
-
-  /* ---------- console grid ---------- */
-  .console{
-    display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:14px;
-  }
-  @media (max-width:860px){
-    .console{ grid-template-columns:1fr; }
-  }
-
-  .panel{
-    background:var(--surface);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:14px;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    min-width:0;
-  }
-  .panel-head{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:8px;
-  }
-  .panel-tag{
-    font-family:"IBM Plex Mono",monospace;
+  .reel-label{
+    text-align:center;
     font-size:10.5px;
-    letter-spacing:.12em;
-    text-transform:uppercase;
-    color:var(--text-faint);
+    color:var(--text-dim);
+    letter-spacing:.1em;
+    margin-top:4px;
   }
-  .panel-tag b{ color:var(--text-dim); font-weight:600; }
-  .panel-note{ font-size:10.5px; color:var(--text-faint); }
+  .reel-col{ flex:1; min-width:0; display:flex; flex-direction:column; }
 
-  .frame{
-    position:relative;
-    width:100%;
-    aspect-ratio:16/9;
-    background:#000;
-    border-radius:6px;
-    overflow:hidden;
-    border:1px solid var(--line);
+  .lever-wrap{ display:flex; justify-content:center; margin-top:4px; }
+  .lever-btn{
+    padding:14px 34px;
+    border-radius:50px;
+    border:none;
+    background:linear-gradient(180deg,#ffe6a0,#e8c15a 60%,#a77f26);
+    color:#2a1a06;
+    font-family:"Yuji Syuku", cursive;
+    font-size:18px;
+    letter-spacing:.2em;
+    cursor:pointer;
+    box-shadow:0 4px 0 #6b4e18, 0 6px 16px rgba(232,193,90,.4);
+    transition:transform .08s, opacity .2s;
   }
-  .frame canvas{
+  .lever-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 #6b4e18; }
+  .lever-btn:disabled{ opacity:.4; pointer-events:none; }
+
+  /* reach dim overlay */
+  .reach-dim{
+    position:absolute; inset:0;
+    background:radial-gradient(ellipse at 50% 45%, rgba(60,0,10,0.35), rgba(0,0,0,0.86) 75%);
+    opacity:0;
+    transition:opacity .5s ease;
+    pointer-events:none;
+    z-index:5;
+  }
+  .reach-dim.on{ opacity:1; }
+
+  /* halo */
+  .halo{
+    position:absolute; left:50%; top:46%;
+    width:280px; height:280px;
+    transform:translate(-50%,-50%) scale(.6);
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(255,224,138,.55) 0%, rgba(255,224,138,.18) 45%, transparent 70%);
+    opacity:0;
+    pointer-events:none;
+    z-index:4;
+  }
+  .halo.on{ opacity:1; animation:halo-pulse 1.6s ease-in-out infinite; }
+  @keyframes halo-pulse{ 0%,100%{ transform:translate(-50%,-50%) scale(.85); opacity:.65; } 50%{ transform:translate(-50%,-50%) scale(1.05); opacity:1; } }
+
+  /* lotus */
+  .lotus{
+    position:absolute; left:50%; top:46%;
+    width:0; height:0;
+    z-index:6;
+    pointer-events:none;
+  }
+  .petal-outer{ position:absolute; left:0; top:0; width:0; height:0; }
+  .petal-inner{
+    position:absolute; left:-16px; top:-66px;
+    width:32px; height:56px;
+    border-radius:50% 50% 50% 50% / 62% 62% 38% 38%;
+    background:linear-gradient(180deg,#ffe2ee,#ff8fb3 55%,#e8c15a);
+    transform-origin:bottom center;
+    transform:scale(0);
+    box-shadow:0 0 10px rgba(255,143,179,.6);
+  }
+  .lotus.open .petal-inner{
+    animation:petal-open .7s cubic-bezier(.2,1.4,.4,1) forwards;
+    animation-delay: calc(var(--i) * 45ms);
+  }
+  @keyframes petal-open{ to{ transform:scale(1); } }
+
+  /* jackpot overlay */
+  .jackpot-overlay{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none;
+    z-index:9;
+    transition:opacity .3s ease;
+  }
+  .jackpot-overlay.on{ opacity:1; }
+  .jackpot-text{
+    font-family:"Yuji Syuku", cursive;
+    font-size:clamp(30px,9.5vw,44px);
+    color:#fff2c8;
+    text-align:center;
+    letter-spacing:.08em;
+    text-shadow:0 0 10px #ffd24d, 0 0 26px #ff3d5a, 0 0 44px #ff3d5a;
+    animation:jackpot-pop .6s cubic-bezier(.3,1.6,.4,1);
+  }
+  @keyframes jackpot-pop{ 0%{ transform:scale(.3) rotate(-6deg); opacity:0; } 60%{ transform:scale(1.15) rotate(2deg); opacity:1; } 100%{ transform:scale(1) rotate(0); } }
+
+  #confetti-canvas{
     position:absolute; inset:0;
     width:100%; height:100%;
-    display:block;
-    image-rendering:pixelated;
+    z-index:8;
+    pointer-events:none;
   }
-  #eyeOverlay{ image-rendering:auto; }
 
-  .pathway{
-    display:flex;
-    flex-wrap:wrap;
-    align-items:center;
-    gap:4px 5px;
-    font-family:"IBM Plex Mono",monospace;
-    font-size:9.5px;
-    letter-spacing:.03em;
-    color:var(--text-faint);
+  .msg-line{
+    text-align:center;
+    font-size:12px;
+    color:var(--text-dim);
+    min-height:16px;
+    letter-spacing:.08em;
   }
-  .pathway .node{
-    background:var(--surface-2);
-    border:1px solid var(--line);
-    border-radius:4px;
-    padding:3px 6px;
-    white-space:nowrap;
-  }
-  .pathway .arrow{ color:var(--accent-dim); }
 
-  .readouts{
-    display:flex;
-    gap:14px;
-    flex-wrap:wrap;
-  }
-  .readout{ display:flex; flex-direction:column; gap:1px; }
-  .readout .k{
-    font-family:"IBM Plex Mono",monospace;
-    font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
-    color:var(--text-faint);
-  }
-  .readout .v{
-    font-family:"IBM Plex Mono",monospace;
-    font-size:15px; color:var(--accent);
-  }
-  .readout.thrust .v{ color:var(--accent-2); }
-
-  /* ---------- telemetry ---------- */
-  .telemetry{
-    background:var(--surface);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:14px;
+  /* ---------- result screen ---------- */
+  .result-body{
+    flex:1;
     display:flex;
     flex-direction:column;
-    gap:8px;
+    align-items:center;
+    justify-content:center;
+    gap:22px;
   }
-  .telemetry-head{
+  .ihai-card{
+    position:relative;
+    width:220px;
+    min-height:400px;
+    background:
+      linear-gradient(180deg, #2a1a08, #170e06 60%, #0c0703);
+    border:3px solid var(--gold);
+    border-radius:14px 14px 60px 60px / 14px 14px 40px 40px;
+    box-shadow:0 0 0 1px rgba(0,0,0,.5), 0 10px 30px rgba(0,0,0,.6), inset 0 0 24px rgba(232,193,90,.12);
     display:flex;
-    justify-content:space-between;
-    align-items:baseline;
-    flex-wrap:wrap;
-    gap:6px 16px;
+    justify-content:center;
+    align-items:flex-start;
+    gap:10px;
+    padding:26px 14px 34px;
   }
-  .legend{ display:flex; gap:14px; flex-wrap:wrap; }
-  .legend-item{
-    display:flex; align-items:center; gap:6px;
-    font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--text-dim);
+  .ihai-card::before{
+    content:"";
+    position:absolute; inset:8px;
+    border:1px solid rgba(232,193,90,.4);
+    border-radius:10px 10px 52px 52px / 10px 10px 34px 34px;
+    pointer-events:none;
   }
-  .swatch{ width:10px; height:2px; border-radius:1px; }
-  #chart{ width:100%; height:130px; display:block; }
+  .kaimyo-col{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    color:var(--gold-bright);
+    text-shadow:0 0 6px rgba(255,224,138,.4);
+  }
+  .kaimyo-col span{ font-size:23px; line-height:1; }
+  .zokumyo-col{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    color:var(--text-dim);
+    margin-top:6px;
+  }
+  .zokumyo-col span{ font-size:12px; line-height:1; }
+  .result-tag{
+    font-family:"Yuji Syuku", cursive;
+    font-size:15px;
+    color:var(--gold);
+    letter-spacing:.16em;
+    text-align:center;
+  }
+  .result-btns{
+    display:flex;
+    gap:12px;
+    width:100%;
+  }
+  .result-btns button{
+    flex:1;
+    padding:14px 6px;
+    border-radius:12px;
+    border:1px solid var(--gold-dim);
+    background:var(--black-3);
+    color:var(--gold-bright);
+    font-family:"Shippori Mincho", serif;
+    font-size:15px;
+    letter-spacing:.06em;
+    cursor:pointer;
+  }
+  .result-btns button.primary{
+    background:linear-gradient(180deg,#ffe6a0,#e8c15a 60%,#a77f26);
+    color:#2a1a06;
+    border:none;
+    font-weight:600;
+  }
 
-  footer{
-    max-width:1180px; margin:0 auto; width:100%;
-    color:var(--text-faint);
-    font-size:12px;
-    line-height:1.6;
-    border-top:1px solid var(--line);
-    padding-top:14px;
-  }
-  footer strong{ color:var(--text-dim); }
-
-  @media (prefers-reduced-motion: reduce){
-    * { animation-duration:0.001ms !important; }
+  @media (min-width:481px){
+    body{ padding:20px 0; }
+    #app{ border-radius:18px; box-shadow:0 0 60px rgba(0,0,0,.6); min-height:auto; }
   }
 </style>
+</head>
+<body>
+<div id="app">
 
-<header>
-  <div>
-    <div class="kicker">ショウジョウバエ 視覚運動ループ・簡易モデル</div>
-    <h1>オプトモーター・コンソール</h1>
-  </div>
-  <p>動く映像を模擬複眼に見せると、Hassenstein–Reichardt相関器がオプティックフロー(視野の動き)を旋回指令に変換します——本物のハエが視界を世界に固定し続けるのと同じ反射です。</p>
-</header>
+  <!-- ============ 1. START ============ -->
+  <section id="screen-start" class="screen active">
+    <div class="neon-frame"></div>
+    <div class="brand-kicker">GOKURAKU SLOT</div>
+    <h1 class="brand-title">極楽スロット</h1>
+    <h2 class="brand-title" style="font-size:clamp(22px,7vw,30px); margin-top:-6px;">戒名大当たり</h2>
+    <div class="sub-title">〜 レバーひとつで、あなたも即身成仏 〜</div>
 
-<main>
-  <div class="rail">
-    <div class="rail-group">
-      <span class="rail-label">刺激</span>
-      <button class="stim" data-stim="gratingR">縞模様 →</button>
-      <button class="stim" data-stim="gratingL">縞模様 ←</button>
-      <button class="stim" data-stim="loom">接近(Loom)</button>
-      <button class="stim" data-stim="spiral">回転</button>
-      <button class="stim" data-stim="noise">静止ノイズ(対照)</button>
-      <label class="upload">動画を読み込む…<input id="fileInput" type="file" accept="video/*"></label>
+    <div class="start-body">
+      <div class="field">
+        <label for="nameInput">お名前（漢字フルネーム）</label>
+        <input id="nameInput" type="text" placeholder="例）山田 太郎" maxlength="12" autocomplete="off">
+        <div class="hint">※漢字を含む本名でお願いします</div>
+        <div class="error" id="nameError"></div>
+      </div>
+
+      <div class="field">
+        <label>性別</label>
+        <div class="gender-row">
+          <div class="gender-btn" data-gender="male">男性</div>
+          <div class="gender-btn" data-gender="female">女性</div>
+        </div>
+        <div class="error" id="genderError"></div>
+      </div>
+
+      <button class="spin-btn" id="toSlotBtn">回 す</button>
     </div>
-    <div class="sep"></div>
-    <div class="rail-group">
-      <div class="slider-wrap"><span class="rail-label">眼の感度</span><input id="gainSlider" type="range" min="0.4" max="3" step="0.05" value="1.4"><span class="val mono" id="gainVal">1.4</span></div>
-      <div class="slider-wrap"><span class="rail-label">旋回ゲイン</span><input id="turnSlider" type="range" min="0.2" max="3" step="0.05" value="1.2"><span class="val mono" id="turnVal">1.2</span></div>
-      <div class="slider-wrap"><span class="rail-label">刺激速度</span><input id="speedSlider" type="range" min="0.2" max="3" step="0.05" value="1"><span class="val mono" id="speedVal">1.0</span></div>
+
+    <div class="disclaimer">※ネタアプリです。実際の戒名は菩提寺でいただくものです</div>
+  </section>
+
+  <!-- ============ 2. SLOT ============ -->
+  <section id="screen-slot" class="screen">
+    <div class="neon-frame"></div>
+    <div class="brand-kicker" style="margin-bottom:2px;">GOKURAKU SLOT</div>
+
+    <div class="beads-row" id="beadsRow">
+      <div class="bead"></div><div class="bead"></div><div class="bead"></div><div class="bead"></div><div class="bead"></div>
     </div>
-    <div class="sep"></div>
-    <div class="rail-group">
-      <button class="icon-btn" id="playBtn">一時停止</button>
-      <button class="ghost" id="resetBtn">ハエをリセット</button>
-    </div>
-  </div>
 
-  <div class="console">
-    <section class="panel">
-      <div class="panel-head">
-        <span class="panel-tag">01 · <b>網膜</b></span>
-        <span class="panel-note" id="stimLabel">縞模様 →</span>
+    <div class="machine" id="machine">
+      <div class="reach-dim" id="reachDim"></div>
+      <div class="halo" id="halo"></div>
+      <div class="lotus" id="lotus"></div>
+      <div class="jackpot-overlay" id="jackpotOverlay">
+        <div class="jackpot-text">㊗ 成仏確定!!</div>
       </div>
-      <div class="frame">
-        <canvas id="sourceCanvas" width="320" height="180"></canvas>
-        <canvas id="eyeOverlay" width="320" height="180"></canvas>
-      </div>
-      <div class="panel-note">288個の模擬個眼(24×12)でシーンをサンプリング——実際のハエの複眼は片眼あたり約700〜800個の個眼を持つ。</div>
-    </section>
+      <canvas id="confetti-canvas"></canvas>
 
-    <section class="panel">
-      <div class="panel-head">
-        <span class="panel-tag">02 · <b>視葉</b></span>
+      <div class="reels">
+        <div class="reel-col">
+          <div class="reel" id="reel0"><div class="reel-text">？</div></div>
+          <div class="reel-label">院号</div>
+        </div>
+        <div class="reel-col">
+          <div class="reel" id="reel1"><div class="reel-text">？</div></div>
+          <div class="reel-label">道号</div>
+        </div>
+        <div class="reel-col">
+          <div class="reel" id="reel2"><div class="reel-text">？</div></div>
+          <div class="reel-label">戒名</div>
+        </div>
+        <div class="reel-col">
+          <div class="reel" id="reel3"><div class="reel-text">？</div></div>
+          <div class="reel-label">位号</div>
+        </div>
       </div>
-      <div class="pathway">
-        <span class="node">R1–R6(視細胞)</span><span class="arrow">→</span>
-        <span class="node">ラミナ</span><span class="arrow">→</span>
-        <span class="node">メデュラ</span><span class="arrow">→</span>
-        <span class="node">ロブラ板(HS/VS)</span><span class="arrow">→</span>
-        <span class="node">下行性ニューロン</span>
-      </div>
-      <div class="frame">
-        <canvas id="motionCanvas" width="320" height="180"></canvas>
-      </div>
-      <div class="readouts">
-        <div class="readout"><span class="k">旋回信号</span><span class="v tabular" id="yawVal">0.00</span></div>
-        <div class="readout thrust"><span class="k">変化量/推力</span><span class="v tabular" id="thrustVal">0.00</span></div>
-      </div>
-    </section>
 
-    <section class="panel">
-      <div class="panel-head">
-        <span class="panel-tag">03 · <b>飛行アリーナ</b></span>
-      </div>
-      <div class="frame" style="background:var(--surface-2);">
-        <canvas id="arenaCanvas" width="320" height="180"></canvas>
-      </div>
-      <div class="readouts">
-        <div class="readout"><span class="k">進行方向</span><span class="v tabular" id="headingVal">0°</span></div>
-        <div class="readout"><span class="k">速度</span><span class="v tabular" id="speedVal2">0.0</span></div>
-      </div>
-    </section>
-  </div>
+      <div class="msg-line" id="msgLine">レバーを引いて運命を開け</div>
 
-  <div class="telemetry">
-    <div class="telemetry-head">
-      <span class="panel-tag">テレメトリ・直近8秒</span>
-      <div class="legend">
-        <span class="legend-item"><span class="swatch" style="background:var(--accent)"></span>旋回信号(yaw)</span>
-        <span class="legend-item"><span class="swatch" style="background:var(--accent-2)"></span>推力(網膜変化量)</span>
+      <div class="lever-wrap">
+        <button class="lever-btn" id="leverBtn">レバー ON</button>
       </div>
     </div>
-    <canvas id="chart" width="1100" height="130"></canvas>
-  </div>
+  </section>
 
-  <footer>
-    <strong>これは何か:</strong> Hassenstein–Reichardt相関器という、ハエの視覚系における初等運動検出の教科書的回路を実装したブラウザ上のおもちゃです——ある個眼の生信号を、隣の個眼の遅延信号と掛け合わせ、左右対称のペアで差し引くことで局所的な動きの向きを検出し、それを実際のロブラ板の広視野細胞(HS/VS)のように集約してオプトモーター旋回反射の信号を作っています。<strong>これではないもの:</strong> 実際のFlyWireコネクトーム——プリンストン大学らのコンソーシアムが構築した14万個以上のニューロンから成る配線図——そのものではありません。あれはブラウザ上でシミュレートするには大きすぎるため、本物の回路のロジックだけを取り出した簡易モデルです。(チャットで共有されたimgurのリンクはこの環境のネットワークポリシーによりimgur.comへのアクセスがブロックされており内容を確認できなかったため、このビルドはテキストで書かれた依頼内容のみをもとに作成しています。)
-  </footer>
-</main>
+  <!-- ============ 3. RESULT ============ -->
+  <section id="screen-result" class="screen">
+    <div class="neon-frame"></div>
+    <div class="result-body">
+      <div class="result-tag" id="resultTag">大往生成就</div>
+      <div class="ihai-card" id="ihaiCard">
+        <div class="kaimyo-col" id="kaimyoCol"></div>
+        <div class="zokumyo-col" id="zokumyoCol"></div>
+      </div>
+      <div class="result-btns">
+        <button id="retryBtn">もう一回</button>
+        <button class="primary" id="saveBtn">画像で保存</button>
+      </div>
+    </div>
+  </section>
+
+</div>
 
 <script>
 (function(){
   "use strict";
 
-  // ---------- canvases ----------
-  var source = document.getElementById('sourceCanvas'), sctx = source.getContext('2d');
-  var overlay = document.getElementById('eyeOverlay'), octx = overlay.getContext('2d');
-  var motionCv = document.getElementById('motionCanvas'), mctx = motionCv.getContext('2d');
-  var arena = document.getElementById('arenaCanvas'), actx = arena.getContext('2d');
-  var chart = document.getElementById('chart'), chctx = chart.getContext('2d');
+  // ---------------- data ----------------
+  var INGOU_LIST = ["慈光","清涼","大願","福寿","浄光","無量","寂照","広徳","円満","松寿","華厳","蓮生","常照","覚心","顕正","瑞雲","光明","安養","帰命","一心"];
+  var DOUGOU_LIST = ["清風","月光","雲山","慈海","松風","竹風","梅月","山水","一心","無我","慈雲","明鏡","清月","飛雲","桂月","泉月","松月","竹月","梅香","雲海","秋月","春風","白雲","紫雲"];
+  var KAIMYO_CHAR2_LIST = ["徳","善","慧","蓮","心","浄","光","道","信","誠","慈","覚","法","教","智","明","空","禅","願"];
+  var FALLBACK_KANJI = ["福","縁","和","誠","心"];
 
-  var W = source.width, H = source.height;
+  var POSITIONS = {
+    male:   { normal:"信士", rare:"居士", kakuhen:"院居士" },
+    female: { normal:"信女", rare:"大姉", kakuhen:"院大姉" }
+  };
 
-  // ---------- ommatidia grid ----------
-  var COLS = 24, ROWS = 12;
-  var tiny = document.createElement('canvas'); tiny.width = COLS; tiny.height = ROWS;
-  var tctx = tiny.getContext('2d', { willReadFrequently: true });
-
-  var lum = new Float32Array(COLS*ROWS);
-  var prevLum = new Float32Array(COLS*ROWS);
-  var delayed = new Float32Array(COLS*ROWS);
-  var motion = new Float32Array(COLS*ROWS); // signed, per-cell horizontal correlator output
-
-  // ---------- stimulus generators ----------
-  var stimType = 'gratingR';
-  var phase = 0;
-  var video = document.createElement('video');
-  video.muted = true; video.loop = true; video.playsInline = true;
-  var usingVideo = false;
-
-  function drawGrating(dir){
-    var freq = 2 * Math.PI / 46;
-    for (var x = 0; x < W; x++){
-      var v = 0.5 + 0.5 * Math.sin(x*freq + phase*dir);
-      sctx.fillStyle = 'rgb(' + [v,v,v].map(function(c){return Math.round(c*255);}).join(',') + ')';
-      sctx.fillRect(x, 0, 1, H);
-    }
-  }
-  function drawLoom(){
-    sctx.fillStyle = '#111'; sctx.fillRect(0,0,W,H);
-    var t = (phase % 130) / 130;
-    var r = t * (W*0.75);
-    var g = sctx.createRadialGradient(W/2,H/2,Math.max(r-14,0),W/2,H/2,r);
-    g.addColorStop(0,'#f2f2f2'); g.addColorStop(1,'#111');
-    sctx.fillStyle = g;
-    sctx.beginPath(); sctx.arc(W/2,H/2,r,0,Math.PI*2); sctx.fill();
-  }
-  function drawSpiral(){
-    sctx.fillStyle = '#111'; sctx.fillRect(0,0,W,H);
-    var cx=W/2, cy=H/2, maxR = Math.hypot(W,H)/2;
-    var arms = 10;
-    sctx.save(); sctx.translate(cx,cy); sctx.rotate(phase*0.02);
-    for (var i=0;i<arms;i++){
-      var a0 = (i/arms)*Math.PI*2;
-      sctx.fillStyle = i%2===0 ? '#eee' : '#222';
-      sctx.beginPath(); sctx.moveTo(0,0);
-      sctx.arc(0,0,maxR,a0,a0+Math.PI/arms); sctx.closePath(); sctx.fill();
-    }
-    sctx.restore();
-  }
-  function drawNoise(){
-    var id = sctx.createImageData(W,H);
-    for (var i=0;i<id.data.length;i+=4){
-      var v = Math.random()*255;
-      id.data[i]=v; id.data[i+1]=v; id.data[i+2]=v; id.data[i+3]=255;
-    }
-    sctx.putImageData(id,0,0);
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  function sleep(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
+  function isKanji(ch){
+    var c = ch.codePointAt(0);
+    return (c>=0x4E00 && c<=0x9FFF) || (c>=0x3400 && c<=0x4DBF) || (c>=0xF900 && c<=0xFAFF);
   }
 
-  function renderSource(dt, speedMul){
-    if (usingVideo && video.readyState >= 2){
-      sctx.drawImage(video, 0, 0, W, H);
-      return;
-    }
-    phase += dt * 60 * speedMul;
-    if (stimType==='gratingR') drawGrating(1);
-    else if (stimType==='gratingL') drawGrating(-1);
-    else if (stimType==='loom') drawLoom();
-    else if (stimType==='spiral') drawSpiral();
-    else drawNoise();
+  // ---------------- state ----------------
+  var selectedGender = null;
+  var enteredName = "";
+  var currentResult = null;
+
+  // ---------------- screen nav ----------------
+  var screens = {
+    start: document.getElementById('screen-start'),
+    slot: document.getElementById('screen-slot'),
+    result: document.getElementById('screen-result')
+  };
+  function showScreen(name){
+    Object.keys(screens).forEach(function(k){ screens[k].classList.toggle('active', k===name); });
   }
 
-  // ---------- eye sampling + Reichardt correlator ----------
-  function sampleEye(){
-    tctx.drawImage(source, 0, 0, COLS, ROWS);
-    var d = tctx.getImageData(0,0,COLS,ROWS).data;
-    for (var i=0, p=0; i<COLS*ROWS; i++, p+=4){
-      lum[i] = (0.299*d[p] + 0.587*d[p+1] + 0.114*d[p+2]) / 255;
-    }
-  }
-
-  var TAU = 0.09; // delay-line time constant, seconds
-  function updateCorrelator(dt, gain){
-    var alpha = 1 - Math.exp(-dt/TAU);
-    var yawSum = 0, fluxSum = 0;
-    for (var y=0; y<ROWS; y++){
-      var rowOff = y*COLS;
-      for (var x=0; x<COLS; x++){
-        var i = rowOff + x;
-        delayed[i] += (prevLum[i] - delayed[i]) * alpha;
-        fluxSum += Math.abs(lum[i]-prevLum[i]);
-      }
-      for (var x2=0; x2<COLS-1; x2++){
-        var a = rowOff + x2, b = rowOff + x2 + 1;
-        var r = lum[a]*delayed[b] - lum[b]*delayed[a];
-        motion[a] = r * gain;
-        yawSum += r;
-      }
-      motion[rowOff+COLS-1] = motion[rowOff+COLS-2];
-    }
-    prevLum.set(lum);
-    var n = COLS*ROWS;
-    return { yaw: (yawSum/n) * gain * 40, flux: (fluxSum/n) * gain * 6 };
-  }
-
-  // ---------- overlay + motion heatmap drawing ----------
-  var cellW = W/COLS, cellH = H/ROWS;
-  function drawOverlay(){
-    octx.clearRect(0,0,W,H);
-    octx.strokeStyle = 'rgba(198,255,61,0.35)';
-    octx.lineWidth = 1;
-    for (var y=0;y<=ROWS;y++){ octx.beginPath(); octx.moveTo(0,y*cellH); octx.lineTo(W,y*cellH); octx.stroke(); }
-    for (var x=0;x<=COLS;x++){ octx.beginPath(); octx.moveTo(x*cellW,0); octx.lineTo(x*cellW,H); octx.stroke(); }
-  }
-  function drawMotionHeat(){
-    mctx.fillStyle = '#0b120d'; mctx.fillRect(0,0,W,H);
-    for (var y=0;y<ROWS;y++){
-      for (var x=0;x<COLS;x++){
-        var v = motion[y*COLS+x];
-        var mag = Math.min(Math.abs(v)*220, 1);
-        if (mag < 0.02) continue;
-        mctx.fillStyle = v > 0
-          ? 'rgba(198,255,61,' + mag.toFixed(3) + ')'
-          : 'rgba(255,122,84,' + mag.toFixed(3) + ')';
-        mctx.fillRect(x*cellW, y*cellH, cellW+0.5, cellH+0.5);
-      }
-    }
-  }
-
-  // ---------- fly avatar physics ----------
-  var fly = { x: W/2, y: H/2, heading: 0, angVel: 0, speed: 24 };
-  var trail = [];
-  function resetFly(){ fly.x=W/2; fly.y=H/2; fly.heading=Math.random()*Math.PI*2; fly.angVel=0; fly.speed=24; trail.length=0; }
-
-  function stepFly(dt, yaw, flux, turnGain){
-    var targetRate = yaw * turnGain * 26; // deg/s
-    targetRate = Math.max(-720, Math.min(720, targetRate));
-    fly.angVel += (targetRate - fly.angVel) * Math.min(1, dt*10);
-    fly.heading += fly.angVel * Math.PI/180 * dt;
-    var base = 22, thrust = Math.max(0, flux) * 30;
-    fly.speed += ((base + thrust) - fly.speed) * Math.min(1, dt*4);
-    fly.x += Math.cos(fly.heading) * fly.speed * dt;
-    fly.y += Math.sin(fly.heading) * fly.speed * dt;
-    if (fly.x < 0) fly.x += W; if (fly.x > W) fly.x -= W;
-    if (fly.y < 0) fly.y += H; if (fly.y > H) fly.y -= H;
-    trail.push({x:fly.x,y:fly.y});
-    if (trail.length > 90) trail.shift();
-  }
-  function drawFly(){
-    actx.fillStyle = '#1a2620'; actx.fillRect(0,0,W,H);
-    actx.strokeStyle='rgba(217,255,200,0.06)';
-    for(var gx=0;gx<W;gx+=20){actx.beginPath();actx.moveTo(gx,0);actx.lineTo(gx,H);actx.stroke();}
-    for(var gy=0;gy<H;gy+=20){actx.beginPath();actx.moveTo(0,gy);actx.lineTo(W,gy);actx.stroke();}
-
-    for (var i=1;i<trail.length;i++){
-      var a = i/trail.length;
-      actx.strokeStyle = 'rgba(198,255,61,' + (a*0.5).toFixed(3) + ')';
-      actx.lineWidth = 1.5;
-      actx.beginPath(); actx.moveTo(trail[i-1].x, trail[i-1].y); actx.lineTo(trail[i].x, trail[i].y); actx.stroke();
-    }
-
-    actx.save();
-    actx.translate(fly.x, fly.y);
-    actx.rotate(fly.heading);
-    actx.fillStyle = 'rgba(198,255,61,0.35)';
-    actx.beginPath(); actx.ellipse(-2,-5,5,3,0.3,0,Math.PI*2); actx.fill();
-    actx.beginPath(); actx.ellipse(-2,5,5,3,-0.3,0,Math.PI*2); actx.fill();
-    actx.fillStyle = '#c6ff3d';
-    actx.beginPath(); actx.ellipse(0,0,7,3.4,0,0,Math.PI*2); actx.fill();
-    actx.fillStyle = '#0b120d';
-    actx.beginPath(); actx.arc(5,0,1.6,0,Math.PI*2); actx.fill();
-    actx.restore();
-  }
-
-  // ---------- telemetry chart ----------
-  var HIST = 480; // samples
-  var yawHist = new Float32Array(HIST);
-  var thrustHist = new Float32Array(HIST);
-  var histPos = 0, histFilled = 0;
-
-  function pushHist(yaw, thrust){
-    yawHist[histPos] = Math.max(-1,Math.min(1,yaw));
-    thrustHist[histPos] = Math.max(-1,Math.min(1,thrust));
-    histPos = (histPos+1) % HIST;
-    histFilled = Math.min(HIST, histFilled+1);
-  }
-
-  function drawChart(){
-    var cw = chart.width, ch = chart.height;
-    chctx.clearRect(0,0,cw,ch);
-    var padL = 34, padR = 10, padT = 8, padB = 16;
-    var plotW = cw - padL - padR, plotH = ch - padT - padB;
-
-    chctx.strokeStyle = 'rgba(217,255,200,0.10)';
-    chctx.fillStyle = '#5f7568';
-    chctx.font = '10px "IBM Plex Mono", monospace';
-    chctx.textAlign = 'right'; chctx.textBaseline='middle';
-    [-1,-0.5,0,0.5,1].forEach(function(v){
-      var y = padT + (1-(v+1)/2)*plotH;
-      chctx.beginPath(); chctx.moveTo(padL,y); chctx.lineTo(cw-padR,y); chctx.stroke();
-      chctx.fillText(v.toFixed(1), padL-6, y);
+  // ---------------- start screen wiring ----------------
+  var genderBtns = Array.prototype.slice.call(document.querySelectorAll('.gender-btn'));
+  genderBtns.forEach(function(b){
+    b.addEventListener('click', function(){
+      selectedGender = b.dataset.gender;
+      genderBtns.forEach(function(x){ x.classList.toggle('selected', x===b); });
+      document.getElementById('genderError').textContent = '';
     });
-    chctx.strokeStyle = 'rgba(217,255,200,0.22)';
-    var zeroY = padT + plotH/2;
-    chctx.beginPath(); chctx.moveTo(padL,zeroY); chctx.lineTo(cw-padR,zeroY); chctx.stroke();
+  });
 
-    function drawLine(hist, color){
-      chctx.beginPath();
-      var n = histFilled;
-      for (var k=0;k<n;k++){
-        var idx = (histPos - n + k + HIST*2) % HIST;
-        var x = padL + (k/(HIST-1)) * plotW;
-        var y = padT + (1-(hist[idx]+1)/2) * plotH;
-        if (k===0) chctx.moveTo(x,y); else chctx.lineTo(x,y);
-      }
-      chctx.strokeStyle = color; chctx.lineWidth = 1.6; chctx.stroke();
-      if (n>0){
-        var lastIdx = (histPos - 1 + HIST) % HIST;
-        var lx = padL + ((n-1)/(HIST-1)) * plotW;
-        var ly = padT + (1-(hist[lastIdx]+1)/2) * plotH;
-        chctx.fillStyle = color;
-        chctx.beginPath(); chctx.arc(lx,ly,2.6,0,Math.PI*2); chctx.fill();
-      }
+  var nameInput = document.getElementById('nameInput');
+  document.getElementById('toSlotBtn').addEventListener('click', function(){
+    var nameErr = document.getElementById('nameError');
+    var genderErr = document.getElementById('genderError');
+    nameErr.textContent = ''; genderErr.textContent = '';
+
+    var val = nameInput.value.trim();
+    var hasKanji = Array.prototype.some.call(Array.from(val), isKanji);
+    var ok = true;
+    if (!val){ nameErr.textContent = '※お名前を入力してください'; ok = false; }
+    else if (!hasKanji){ nameErr.textContent = '※漢字を含む名前を入力してください'; ok = false; }
+    if (!selectedGender){ genderErr.textContent = '※性別を選んでください'; ok = false; }
+    if (!ok) return;
+
+    enteredName = val;
+    ensureAudio();
+    resetSlotVisuals();
+    showScreen('slot');
+  });
+
+  // ---------------- kaimyo generation ----------------
+  function generateResult(name, gender){
+    var inGoWin = Math.random() < 0.10;
+    var inGo = inGoWin ? (pick(INGOU_LIST) + '院') : '';
+
+    var dou = pick(DOUGOU_LIST);
+
+    var nameChars = Array.from(name).filter(isKanji);
+    var char1 = nameChars.length ? pick(nameChars) : pick(FALLBACK_KANJI);
+    var char2 = pick(KAIMYO_CHAR2_LIST);
+    var kaimyo = char1 + char2;
+
+    var posSet = POSITIONS[gender];
+    var posTier, position;
+    if (inGoWin){
+      posTier = 'kakuhen';
+      position = posSet.kakuhen;
+    } else {
+      var r = Math.random() * 95;
+      if (r < 70){ posTier = 'normal'; position = posSet.normal; }
+      else { posTier = 'rare'; position = posSet.rare; }
     }
-    drawLine(yawHist, '#c6ff3d');
-    drawLine(thrustHist, '#ff7a54');
+
+    return { inGoWin: inGoWin, inGo: inGo, dou: dou, kaimyo: kaimyo, position: position, posTier: posTier };
   }
 
-  // ---------- UI wiring ----------
-  var gain = 1.4, turnGain = 1.2, speedMul = 1.0, running = true;
-  document.getElementById('gainSlider').addEventListener('input', function(e){
-    gain = parseFloat(e.target.value); document.getElementById('gainVal').textContent = gain.toFixed(2);
-  });
-  document.getElementById('turnSlider').addEventListener('input', function(e){
-    turnGain = parseFloat(e.target.value); document.getElementById('turnVal').textContent = turnGain.toFixed(2);
-  });
-  document.getElementById('speedSlider').addEventListener('input', function(e){
-    speedMul = parseFloat(e.target.value); document.getElementById('speedVal').textContent = speedMul.toFixed(2);
-  });
-  document.getElementById('gainVal').textContent = gain.toFixed(2);
-  document.getElementById('turnVal').textContent = turnGain.toFixed(2);
-  document.getElementById('speedVal').textContent = speedMul.toFixed(2);
-
-  var stimButtons = Array.prototype.slice.call(document.querySelectorAll('button.stim'));
-  var labels = {gratingR:'縞模様 →', gratingL:'縞模様 ←', loom:'接近(Loom)', spiral:'回転', noise:'静止ノイズ(対照)'};
-  function setActiveStim(type){
-    stimType = type; usingVideo = false;
-    stimButtons.forEach(function(b){ b.classList.toggle('active', b.dataset.stim===type); });
-    document.getElementById('stimLabel').textContent = labels[type];
+  function computeLevel(result){
+    if (result.inGoWin) return 3;          // 虹
+    if (result.posTier === 'rare') return 2; // 金
+    if (Math.random() < 0.18) return 1;     // 青(フェイク期待)
+    return 0;                                // 白
   }
-  stimButtons.forEach(function(b){ b.addEventListener('click', function(){ setActiveStim(b.dataset.stim); }); });
-  setActiveStim('gratingR');
 
-  document.getElementById('fileInput').addEventListener('change', function(e){
-    var f = e.target.files[0]; if (!f) return;
-    var url = URL.createObjectURL(f);
-    video.src = url; video.play();
-    usingVideo = true;
-    stimButtons.forEach(function(b){ b.classList.remove('active'); });
-    document.getElementById('stimLabel').textContent = 'アップロードされた動画';
-  });
-
-  var playBtn = document.getElementById('playBtn');
-  playBtn.addEventListener('click', function(){
-    running = !running; playBtn.textContent = running ? '一時停止' : '再開';
-    if (usingVideo){ if (running) video.play(); else video.pause(); }
-  });
-  document.getElementById('resetBtn').addEventListener('click', resetFly);
-
-  // ---------- main loop ----------
-  var last = performance.now();
-  var smoothYaw = 0, smoothThrust = 0;
-
-  function frame(now){
-    var dt = Math.min(0.05, (now-last)/1000); last = now;
-    if (running){
-      renderSource(dt, speedMul);
-      sampleEye();
-      var sig = updateCorrelator(dt, gain);
-      smoothYaw += (sig.yaw - smoothYaw) * 0.25;
-      smoothThrust += (sig.flux - smoothThrust) * 0.25;
-
-      drawOverlay();
-      drawMotionHeat();
-      stepFly(dt, smoothYaw, smoothThrust, turnGain);
-      drawFly();
-      pushHist(smoothYaw, smoothThrust);
-      drawChart();
-
-      document.getElementById('yawVal').textContent = smoothYaw.toFixed(2);
-      document.getElementById('thrustVal').textContent = smoothThrust.toFixed(2);
-      document.getElementById('headingVal').textContent = Math.round(((fly.heading*180/Math.PI)%360+360)%360) + '°';
-      document.getElementById('speedVal2').textContent = fly.speed.toFixed(1);
+  // ---------------- audio ----------------
+  var audioCtx = null;
+  function ensureAudio(){
+    if (!audioCtx){
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) audioCtx = new AC();
     }
-    requestAnimationFrame(frame);
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  }
+  function playReelStop(){
+    if (!audioCtx) return;
+    var t = audioCtx.currentTime;
+    var osc = audioCtx.createOscillator();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(300, t);
+    osc.frequency.exponentialRampToValueAtTime(180, t+0.08);
+    var g = audioCtx.createGain();
+    g.gain.setValueAtTime(0.22, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t+0.1);
+    osc.connect(g).connect(audioCtx.destination);
+    osc.start(t); osc.stop(t+0.12);
+  }
+  function playMokugyo(){
+    if (!audioCtx) return;
+    var t = audioCtx.currentTime;
+    var size = Math.floor(audioCtx.sampleRate * 0.05);
+    var buffer = audioCtx.createBuffer(1, size, audioCtx.sampleRate);
+    var data = buffer.getChannelData(0);
+    for (var i=0;i<size;i++){ data[i] = (Math.random()*2-1) * Math.pow(1-i/size, 3); }
+    var noise = audioCtx.createBufferSource();
+    noise.buffer = buffer;
+    var bp = audioCtx.createBiquadFilter();
+    bp.type = 'bandpass'; bp.frequency.value = 900; bp.Q.value = 7;
+    var g = audioCtx.createGain();
+    g.gain.setValueAtTime(0.45, t);
+    g.gain.exponentialRampToValueAtTime(0.01, t+0.14);
+    noise.connect(bp).connect(g).connect(audioCtx.destination);
+    noise.start(t); noise.stop(t+0.15);
+  }
+  function playBell(){
+    if (!audioCtx) return;
+    var t = audioCtx.currentTime;
+    var freqs = [82, 137, 165, 219, 296];
+    var master = audioCtx.createGain();
+    master.gain.setValueAtTime(0.0001, t);
+    master.gain.linearRampToValueAtTime(0.38, t+0.03);
+    master.gain.exponentialRampToValueAtTime(0.0008, t+4.2);
+    master.connect(audioCtx.destination);
+    freqs.forEach(function(f, idx){
+      var osc = audioCtx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = f;
+      var g = audioCtx.createGain();
+      g.gain.value = 1/(idx+1.3);
+      osc.connect(g).connect(master);
+      osc.start(t); osc.stop(t+4.3);
+    });
   }
 
-  resetFly();
-  drawOverlay();
-  requestAnimationFrame(frame);
-
-  // ---------- hot reload state (position survives republish) ----------
-  function snapshot(){ return { fly: fly, trail: trail, stimType: usingVideo ? 'gratingR' : stimType }; }
-  if (window.claude && window.claude.hot){
-    window.claude.hot.snapshot(snapshot);
-    var data = window.claude.hot.data;
-    if (data && data.fly){ Object.assign(fly, data.fly); if (data.trail) trail = data.trail; if (data.stimType) setActiveStim(data.stimType); }
+  var mokugyoTimer = null, reachActive = false;
+  function startMokugyoLoop(){
+    var delay = 480;
+    function tick(){
+      playMokugyo();
+      if (reachActive) delay = Math.max(105, delay - 42);
+      mokugyoTimer = setTimeout(tick, delay);
+    }
+    tick();
   }
+  function stopMokugyoLoop(){
+    clearTimeout(mokugyoTimer); mokugyoTimer = null; reachActive = false;
+  }
+
+  // ---------------- beads ----------------
+  var beads = Array.prototype.slice.call(document.querySelectorAll('#beadsRow .bead'));
+  var LEVEL_CLASS = ['white','blue','gold','rainbow'];
+  function resetBeads(){ beads.forEach(function(b){ b.className = 'bead'; }); }
+  function revealBeads(level){
+    var cls = LEVEL_CLASS[level];
+    beads.forEach(function(b, i){
+      setTimeout(function(){ b.classList.add(cls); }, i*110);
+    });
+  }
+
+  // ---------------- reels ----------------
+  var reelPools = [
+    INGOU_LIST.map(function(s){return s+'院';}).concat(['―――']),
+    DOUGOU_LIST,
+    (function(){ var arr=[]; for(var i=0;i<16;i++){ arr.push(pick(FALLBACK_KANJI.concat(['山','花','海','空']))+pick(KAIMYO_CHAR2_LIST)); } return arr; })(),
+    ['信士','信女','居士','大姉','院居士','院大姉']
+  ];
+  var reelEls = [0,1,2,3].map(function(i){ return document.getElementById('reel'+i); });
+  var reelTimers = [null,null,null,null];
+
+  function startReelSpin(i){
+    reelEls[i].classList.remove('stopped');
+    reelEls[i].classList.add('spinning');
+    var textEl = reelEls[i].querySelector('.reel-text');
+    reelTimers[i] = setInterval(function(){
+      textEl.textContent = pick(reelPools[i]);
+    }, 65);
+  }
+  function stopReelSpin(i, finalText){
+    clearInterval(reelTimers[i]);
+    reelEls[i].classList.remove('spinning');
+    var textEl = reelEls[i].querySelector('.reel-text');
+    textEl.textContent = finalText && finalText.length ? finalText : '―――';
+    reelEls[i].classList.add('stopped');
+    playReelStop();
+    if (navigator.vibrate) { try { navigator.vibrate(15); } catch(e){} }
+  }
+  function resetSlotVisuals(){
+    reelEls.forEach(function(el){
+      el.classList.remove('spinning','stopped');
+      el.querySelector('.reel-text').textContent = '？';
+    });
+    resetBeads();
+    document.getElementById('reachDim').classList.remove('on');
+    document.getElementById('halo').classList.remove('on');
+    document.getElementById('lotus').classList.remove('open');
+    document.getElementById('lotus').innerHTML = '';
+    document.getElementById('jackpotOverlay').classList.remove('on');
+    document.getElementById('msgLine').textContent = 'レバーを引いて運命を開け';
+    document.getElementById('leverBtn').disabled = false;
+    clearConfetti();
+  }
+
+  function buildLotus(){
+    var lotus = document.getElementById('lotus');
+    lotus.innerHTML = '';
+    var n = 12;
+    for (var i=0;i<n;i++){
+      var outer = document.createElement('div');
+      outer.className = 'petal-outer';
+      outer.style.transform = 'rotate(' + (i*(360/n)) + 'deg)';
+      var inner = document.createElement('div');
+      inner.className = 'petal-inner';
+      inner.style.setProperty('--i', i);
+      outer.appendChild(inner);
+      lotus.appendChild(outer);
+    }
+  }
+
+  // ---------------- confetti ----------------
+  var confettiCv = document.getElementById('confetti-canvas');
+  var cctx = confettiCv.getContext('2d');
+  var confettiParticles = [];
+  var confettiRunning = false;
+  function sizeConfettiCanvas(){
+    var rect = document.getElementById('machine').getBoundingClientRect();
+    confettiCv.width = rect.width; confettiCv.height = rect.height;
+  }
+  function startConfetti(){
+    sizeConfettiCanvas();
+    confettiParticles = [];
+    var colors = ['#ffd24d','#ffe6a0','#ff3d5a','#fff2c8'];
+    for (var i=0;i<90;i++){
+      confettiParticles.push({
+        x: Math.random()*confettiCv.width,
+        y: -20 - Math.random()*confettiCv.height*0.6,
+        r: 3+Math.random()*4,
+        vy: 1.4+Math.random()*2.2,
+        vx: (Math.random()-0.5)*1.6,
+        rot: Math.random()*Math.PI*2,
+        vr: (Math.random()-0.5)*0.3,
+        color: colors[i%colors.length]
+      });
+    }
+    confettiRunning = true;
+    requestAnimationFrame(confettiLoop);
+  }
+  function confettiLoop(){
+    if (!confettiRunning) return;
+    cctx.clearRect(0,0,confettiCv.width, confettiCv.height);
+    confettiParticles.forEach(function(p){
+      p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+      if (p.y > confettiCv.height+20){ p.y = -20; p.x = Math.random()*confettiCv.width; }
+      cctx.save();
+      cctx.translate(p.x, p.y);
+      cctx.rotate(p.rot);
+      cctx.fillStyle = p.color;
+      cctx.fillRect(-p.r, -p.r*0.5, p.r*2, p.r);
+      cctx.restore();
+    });
+    requestAnimationFrame(confettiLoop);
+  }
+  function clearConfetti(){
+    confettiRunning = false;
+    cctx && cctx.clearRect(0,0,confettiCv.width, confettiCv.height);
+  }
+
+  // ---------------- spin sequence ----------------
+  var spinning = false;
+  document.getElementById('leverBtn').addEventListener('click', function(){
+    if (spinning) return;
+    runSpin();
+  });
+
+  function runSpin(){
+    spinning = true;
+    document.getElementById('leverBtn').disabled = true;
+    document.getElementById('msgLine').textContent = '回転中…';
+
+    var result = generateResult(enteredName, selectedGender);
+    currentResult = result;
+    var level = computeLevel(result);
+
+    ensureAudio();
+    resetBeads();
+    revealBeads(level);
+    reelEls.forEach(function(_, i){ startReelSpin(i); });
+    startMokugyoLoop();
+
+    (async function(){
+      await sleep(950);
+      stopReelSpin(0, result.inGo);
+
+      await sleep(750);
+      stopReelSpin(1, result.dou);
+
+      if (level >= 2){
+        reachActive = true;
+        document.getElementById('reachDim').classList.add('on');
+        document.getElementById('msgLine').textContent = 'リーチ！！';
+        if (level === 3){
+          document.getElementById('halo').classList.add('on');
+          buildLotus();
+          document.getElementById('lotus').classList.add('open');
+        }
+        await sleep(1700);
+      }
+
+      await sleep(650);
+      stopReelSpin(2, result.kaimyo);
+
+      await sleep(650);
+      stopReelSpin(3, result.position);
+
+      stopMokugyoLoop();
+      document.getElementById('reachDim').classList.remove('on');
+
+      if (result.inGoWin){
+        document.getElementById('msgLine').textContent = '大当たり！！';
+        document.getElementById('jackpotOverlay').classList.add('on');
+        startConfetti();
+        playBell();
+        await sleep(2400);
+      } else {
+        document.getElementById('msgLine').textContent = '結果が出ました';
+        await sleep(900);
+      }
+
+      document.getElementById('halo').classList.remove('on');
+      document.getElementById('lotus').classList.remove('open');
+      document.getElementById('jackpotOverlay').classList.remove('on');
+      clearConfetti();
+
+      spinning = false;
+      showResult(result);
+    })();
+  }
+
+  // ---------------- result screen ----------------
+  function setVerticalText(el, text, fontSize){
+    el.innerHTML = '';
+    Array.from(text).forEach(function(ch){
+      var span = document.createElement('span');
+      span.textContent = ch;
+      if (fontSize) span.style.fontSize = fontSize + 'px';
+      el.appendChild(span);
+    });
+  }
+
+  function showResult(result){
+    var full = (result.inGo || '') + result.dou + result.kaimyo + result.position;
+    var len = Array.from(full).length;
+    var fontSize = len <= 6 ? 23 : (len <= 8 ? 19 : 16);
+    setVerticalText(document.getElementById('kaimyoCol'), full, fontSize);
+    setVerticalText(document.getElementById('zokumyoCol'), '俗名　' + enteredName);
+    document.getElementById('resultTag').textContent = result.inGoWin ? '㊗ 成仏確定 大往生' : '合掌';
+    showScreen('result');
+  }
+
+  document.getElementById('retryBtn').addEventListener('click', function(){
+    resetSlotVisuals();
+    showScreen('slot');
+  });
+
+  // ---------------- save as image ----------------
+  document.getElementById('saveBtn').addEventListener('click', async function(){
+    if (!currentResult) return;
+    try { if (document.fonts && document.fonts.load) { await document.fonts.load('700 32px "Shippori Mincho"'); await document.fonts.load('20px "Yuji Syuku"'); } } catch(e){}
+
+    var W = 700, H = 1000;
+    var cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    var ctx = cv.getContext('2d');
+
+    var bg = ctx.createLinearGradient(0,0,0,H);
+    bg.addColorStop(0,'#241708'); bg.addColorStop(0.6,'#150d06'); bg.addColorStop(1,'#0a0603');
+    ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+
+    // ihai plaque
+    var px=140, py=110, pw=W-280, ph=H-260;
+    ctx.save();
+    ctx.strokeStyle = '#e8c15a';
+    ctx.lineWidth = 5;
+    roundRectPath(ctx, px, py, pw, ph, 40);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(232,193,90,0.5)';
+    ctx.lineWidth = 1.5;
+    roundRectPath(ctx, px+10, py+10, pw-20, ph-20, 32);
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#e8c15a';
+    ctx.font = '22px "Shippori Mincho", serif';
+    ctx.fillText(currentResult.inGoWin ? '㊗ 成仏確定 大往生' : '合掌', W/2, 78);
+
+    var full = (currentResult.inGo || '') + currentResult.dou + currentResult.kaimyo + currentResult.position;
+    var chars = Array.from(full);
+    var fontSize = chars.length > 9 ? 34 : 42;
+    var lineH = fontSize * 1.18;
+    var totalH = chars.length * lineH;
+    var startY = H/2 - totalH/2 + lineH/2;
+    ctx.font = '600 ' + fontSize + 'px "Shippori Mincho", serif';
+    ctx.fillStyle = '#ffe6a0';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = 'rgba(255,224,138,0.5)';
+    ctx.shadowBlur = 10;
+    chars.forEach(function(ch, i){
+      ctx.fillText(ch, W/2, startY + i*lineH);
+    });
+    ctx.shadowBlur = 0;
+
+    var zoku = ('俗名　' + enteredName);
+    var zChars = Array.from(zoku);
+    var zFont = 16, zLineH = 22;
+    ctx.font = zFont + 'px "Shippori Mincho", serif';
+    ctx.fillStyle = '#b6a582';
+    var zx = px + pw - 46;
+    var zStartY = H/2 - (zChars.length*zLineH)/2 + zLineH/2;
+    zChars.forEach(function(ch,i){ ctx.fillText(ch, zx, zStartY + i*zLineH); });
+
+    ctx.font = '13px "Shippori Mincho", serif';
+    ctx.fillStyle = '#8a6b2a';
+    ctx.fillText('極楽スロット 戒名大当たり（ネタアプリ）', W/2, H-40);
+
+    cv.toBlob(function(blob){
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = '戒名_' + enteredName + '.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+    }, 'image/png');
+  });
+
+  function roundRectPath(ctx, x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.arcTo(x+w, y, x+w, y+h, r);
+    ctx.arcTo(x+w, y+h, x, y+h, r);
+    ctx.arcTo(x, y+h, x, y, r);
+    ctx.arcTo(x, y, x+w, y, r);
+    ctx.closePath();
+  }
+
 })();
 </script>
+</body>
+</html>
